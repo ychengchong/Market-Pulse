@@ -1,0 +1,18 @@
+# Local Python environments and generated caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Generated filing snapshots and pipeline outputs
+/data/
+/log/
+*.log
+
+# Local credentials and application settings
+.env
+.env.*
+!.env.example
+/.streamlit/secrets.toml
