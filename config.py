@@ -16,7 +16,7 @@ WATCHLIST = {
 
 
 SEC_HEADERS = {
-    "User-Agent": "Tan Yi Cheng project",
+    "User-Agent": "Market Pulse 2003yicheng@gmail.com",
     "Accept-Encoding": "gzip, deflate"
 }
 
