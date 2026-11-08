@@ -22,7 +22,8 @@ python -B -m unittest discover -s tests -v
 Tests mock SEC transport and use isolated files under ignored `data/.test-runs/`.
 They cover retries, access denial, response validation, checkpoint preservation,
 real HTML parsing and Streamlit behaviour through its AppTest API. They do not
-measure summary quality or establish continuing live SEC availability.
+establish continuing live SEC availability. Baseline evidence checks are separate
+from ingestion correctness; see the evaluation guidance below.
 
 ## Functional verification when changing pipeline behaviour
 
@@ -63,17 +64,30 @@ not evidence of existing test coverage.
 - Select acceptance thresholds and evaluation budgets before running paid or
   final confirmation evaluations. Report failed cases and fallback coverage.
 
+## Rule-based development baseline
+
+Use the [locked environment](reproducibility.md), then run:
+
+```powershell
+python -m scripts.environment
+python -m evals.run --verify reports/rule-based-baseline-v2.json
+```
+
+The suite, predeclared section-fix criteria, provenance and scoring limitations
+live in [evals/README.md](../evals/README.md). Results are authoritative in the
+[before/after reports](../reports/README.md). Fixture or environment changes must
+not silently reuse an old baseline identity. Case errors stay in the denominator.
+
 ## Current quality and operational gaps
 
-Rule-based summary quality has not been measured. Before changing extraction or
-ranking rules, define representative `8-K`, `10-Q`, and `10-K` cases with
-human-reviewed references and report failures and fallback coverage separately.
-Do not treat deterministic execution as evidence of factual completeness.
+The 15-case baseline is agent-reviewed and contains adapted excerpts and synthetic
+inputs; human review and an independent confirmation set are still pending. Exact
+evidence matching tests extractive output, not the quality of paraphrased LLM
+answers. Full-filing quality, exhibit coverage, proper 10-K handling,
+latency/cost acceptance thresholds and human-rated completeness remain open.
 
-The environment has no dependency lockfile. Before claiming reproducibility,
-choose a supported Python version, resolve and lock dependencies in a clean
-environment, and verify installation and the offline pipeline there. Live SEC
-availability requires separate verification. Checkpoint writes are atomic, but
-checkpoint and run-report publication are separate operations. HTML cache identity
-is still accession-based; concurrent runs and crash recovery across multiple
-stages are not transactional.
+Dependencies are now locked and clean-install checked for the documented Windows
+CPython target. Other platforms are unverified. Live SEC availability requires
+separate verification. Checkpoint writes are atomic, but checkpoint and run-report
+publication are separate operations. HTML cache identity is still accession-based;
+concurrent runs and crash recovery across multiple stages are not transactional.

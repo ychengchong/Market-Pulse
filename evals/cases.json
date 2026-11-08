@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "suite_id": "filing-baseline-v2",
+  "review": {
+    "reviewer": "Codex",
+    "status": "agent-reviewed",
+    "human_review": "pending"
+  },
+  "scope": "Development diagnostics only. Eight adapted cached excerpts and seven synthetic cases. No final holdout or production-quality claim.",
+  "cases": [
+    {
+      "id": "nvda-10q-excerpt",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "NVDA",
+      "form": "10-Q",
+      "fixture": "fixtures/nvda-10q-excerpt.txt",
+      "input_sha256": "d8b6880e97b8508f99ad0811362710bf0599cd27406cd8741d48d31b21774185",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+        "accession_number": "0001045810-26-000075",
+        "filing_date": "2026-08-26",
+        "source_clean_text_sha256": "990a92d3052d46458b406585bc9bc43f21795827e333ae9b1430ac2ee472f6a8",
+        "source_line_1based": 2939,
+        "note": "Financial paragraph copied verbatim from local cached text. TOC/heading scaffold shortened; not a full-filing evaluation. Source not independently refetched."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Data Center revenue was $89.0 billion, up 117% from a year ago and up 18% sequentially, driven by the ramp of our Blackwell Ultra infrastructure."
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "msft-10q-excerpt",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "MSFT",
+      "form": "10-Q",
+      "fixture": "fixtures/msft-10q-excerpt.txt",
+      "input_sha256": "cbdd475a72edd8f70ebcc640b35f0077c8b5c963e6f79216775973af920e39b9",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+        "accession_number": "0001193125-26-436133",
+        "filing_date": "2026-10-28",
+        "source_clean_text_sha256": "151dfd0201a271ef03c1a668f93bfec739bad67f453dcdf9c90b37e755529041",
+        "source_line_1based": 3201,
+        "note": "Financial paragraph copied verbatim from local cached text. TOC/heading scaffold shortened; not a full-filing evaluation. Source not independently refetched."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Revenue increased $14.6 billion or 19% driven by growth in Agents and Infra."
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "googl-10q-excerpt",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "GOOGL",
+      "form": "10-Q",
+      "fixture": "fixtures/googl-10q-excerpt.txt",
+      "input_sha256": "3a6033df9b4cdc655205f5ac2cb4ab66659f9ab88dcddc4a84c41527d1c9a05f",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+        "accession_number": "0001652044-26-000084",
+        "filing_date": "2026-10-29",
+        "source_clean_text_sha256": "ce1cbf9fc8677d651935078c8c2320d3aa49ef0fae1cdac06bb6508364149d77",
+        "source_line_1based": 5405,
+        "note": "Financial paragraph copied verbatim from local cached text. TOC/heading scaffold shortened; not a full-filing evaluation. Source not independently refetched."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Google Search & other revenues increased $6.8 billion and $25.6 billion from the three and nine months ended September 30, 2025 to the three and nine months ended September 30, 2026."
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "amzn-10q-excerpt",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "AMZN",
+      "form": "10-Q",
+      "fixture": "fixtures/amzn-10q-excerpt.txt",
+      "input_sha256": "fc34bff728b6b3bac362529fb904ae5a122c8f800e82f6c563d46444e54ed81c",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm",
+        "accession_number": "0001018724-26-000040",
+        "filing_date": "2026-10-30",
+        "source_clean_text_sha256": "d1c0261c088458affa5ecb96dfe07110695a62c41a96187ceb18d03b1bf8f313",
+        "source_line_1based": 3569,
+        "note": "Financial paragraph copied verbatim from local cached text. TOC/heading scaffold shortened; not a full-filing evaluation. Source not independently refetched."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Operating income increased from $17.4 billion in Q3 2025 to $28.1 billion in Q3 2026, and increased from $55.0 billion for the nine months ended September 30, 2025 to $79.4 billion for the nine months ended September 30, 2026."
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "aapl-10q-excerpt",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "AAPL",
+      "form": "10-Q",
+      "fixture": "fixtures/aapl-10q-excerpt.txt",
+      "input_sha256": "d70bdb356aa97adf8b58579b41dcd64e836f1926d7d60d7c34166c38fa9e978b",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+        "accession_number": "0000320193-26-000020",
+        "filing_date": "2026-07-31",
+        "source_clean_text_sha256": "38b04e44d03beae5d5203b68b4a4fa4579d78d6da72412b35eddf9e32f9aa922",
+        "source_line_1based": 2167,
+        "note": "Financial paragraph copied verbatim from local cached text. TOC/heading scaffold shortened; not a full-filing evaluation. Source not independently refetched."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Americas net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone, Services and Mac."
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "8k-agreement",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "8-K",
+      "fixture": "fixtures/8k-agreement.txt",
+      "input_sha256": "6201a080c6c18ed0e79c486a5474e06b419cef82e9ec5695d8be3ea549de5606",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "material agreement",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Example Corporation signed a five-year supply agreement"
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "8k-leadership",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "8-K",
+      "fixture": "fixtures/8k-leadership.txt",
+      "input_sha256": "a7972f81c2e9de6a8f130bf8b5b7019fc2d5c655cf3939760f3a82390c93a2fb",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "leadership",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Example Corporation appointed Morgan Lee as chief financial officer"
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "empty-filing",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "fixture": "fixtures/empty-filing.txt",
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "unknown",
+        "expect_fallback": true,
+        "required_evidence": [],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "10q-table-only",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "fixture": "fixtures/10q-table-only.txt",
+      "input_sha256": "21a9030dbd419d74ec97ea182d15df12c934167a2083f90338e049c7bebf3db6",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": true,
+        "required_evidence": [],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "10q-boundary",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "fixture": "fixtures/10q-boundary.txt",
+      "input_sha256": "502b83291737b29bb78a10d12b092c33676a8d079d8d21dc295c615c117134a8",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Revenue increased 12% to $120 million"
+        ],
+        "forbidden_evidence": [
+          "$999 million",
+          "99%"
+        ]
+      }
+    },
+    {
+      "id": "10q-heading-missing",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "fixture": "fixtures/10q-heading-missing.txt",
+      "input_sha256": "702e1e75c5f09f13eba0102896c945f54c795e053f54976161ea8618eea90056",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Revenue increased 15% to $230 million"
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "10k-current-fallback",
+      "split": "development",
+      "kind": "synthetic",
+      "ticker": "SYNTHETIC",
+      "form": "10-K",
+      "fixture": "fixtures/10k-current-fallback.txt",
+      "input_sha256": "466b7f906ae4c726ba7f2a486ae5efd63b11c84c1df2b5ea59e6da0981e6c5c8",
+      "provenance": {
+        "note": "Invented company and figures. Structural edge case; not SEC evidence."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Net sales increased 10% to $550 million"
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "amzn-8k-2026-10-29",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "AMZN",
+      "form": "8-K",
+      "fixture": "fixtures/amzn-8k-2026-10-29.txt",
+      "input_sha256": "302b26b881190636b40275d4d2435da08b1d6bcd2b92ccb61dfb2d05c0ce20fa",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20261029.htm",
+        "accession_number": "0001018724-26-000038",
+        "filing_date": "2026-10-29",
+        "source_clean_text_sha256": "53902e80dda5f9b2de3d05e444b5a399d6a5b9516ff8f8bbcecba2b67fdc08b0",
+        "source_start_line_1based": 97,
+        "source_end_line_1based": 107,
+        "note": "Contiguous cached text excerpt including TOC and body; not an independently refetched or complete filing."
+      },
+      "reference": {
+        "event_type": "earnings/results",
+        "expect_fallback": false,
+        "required_evidence": [
+          "announced its third quarter 2026 financial results"
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "amzn-8k-2026-09-14",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "AMZN",
+      "form": "8-K",
+      "fixture": "fixtures/amzn-8k-2026-09-14.txt",
+      "input_sha256": "adb449376d4da457ba62355a4fd733a099272500da11089de6fd16f5803517c7",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926107526/tm2624614d5_8k.htm",
+        "accession_number": "0001104659-26-107526",
+        "filing_date": "2026-09-14",
+        "source_clean_text_sha256": "9591fc045b07370eed5252f41524f01ba41c0a33d4669ed299192fa41423231c",
+        "source_start_line_1based": 125,
+        "source_end_line_1based": 166,
+        "note": "Contiguous cached text excerpt including TOC and body; not an independently refetched or complete filing."
+      },
+      "reference": {
+        "event_type": "other event",
+        "expect_fallback": false,
+        "required_evidence": [
+          "closed the sale of"
+        ],
+        "forbidden_evidence": []
+      }
+    },
+    {
+      "id": "amzn-8k-2026-09-09",
+      "split": "development",
+      "kind": "adapted_cached_excerpt",
+      "ticker": "AMZN",
+      "form": "8-K",
+      "fixture": "fixtures/amzn-8k-2026-09-09.txt",
+      "input_sha256": "5b3c1bbfce57c65a800d724ad795e72696e24c9e09b4f5e75dc0205650be7232",
+      "provenance": {
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000036/amzn-20260908.htm",
+        "accession_number": "0001018724-26-000036",
+        "filing_date": "2026-09-09",
+        "source_clean_text_sha256": "577b948fbcb95ee55b69496c7e275cf0b9494c9f7c1aee273a8296405d0dd678",
+        "source_start_line_1based": 85,
+        "source_end_line_1based": 95,
+        "note": "Contiguous cached text excerpt including TOC and body; not an independently refetched or complete filing."
+      },
+      "reference": {
+        "event_type": "leadership",
+        "expect_fallback": false,
+        "required_evidence": [
+          "Mandia as a director of the Company"
+        ],
+        "forbidden_evidence": []
+      }
+    }
+  ]
+}

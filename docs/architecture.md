@@ -24,12 +24,21 @@ deployment record is configured.
 | Text extraction | `src/html_parser.py` | BeautifulSoup with lxml removes scripts, hidden elements and selected XBRL tags, then returns nonempty lines. The processing script treats empty output as failure. |
 | Processing checkpoint | `process_filings.py` | Copies metadata and adds `html_path`, `text_path`, `text_characters`, `processing_status`, and `processing_error`. Failed attempts have null paths, zero characters and an error string in `data/processing_status.json`. The main checkpoint is replaced only by a complete nonempty successful batch. |
 | Summary generation | `src/summarizer.py`, `summarize_filings.py` | Summary records retain source metadata except `document`, adding `event_type`, `summary`, `source_word_count`, and `summary_method`. Failed processing records and missing/empty text are reported per filing; an incomplete batch preserves the previous summaries. Empty or unsuitable text produces explanatory fallback text. |
-| Display | `dashboard.py` | Loads the summaries array and filters by company/form. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
+| Display | `dashboard.py` | Loads the summaries array and filters by company/form. Groups 8-Ks per company with dated newest-first entries, source links and expandable long summaries; 10-Q/10-K cards remain individual and metrics count filings. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
 
 Metadata arrays, filing identities, input-array shape, downloaded HTML and
 dashboard summary fields are validated. These contracts do not yet have a
 formal schema version. The summariser selects `8-K` rules for
 that form and uses `10-Q` rules for all other supplied forms, including `10-K`.
+Quarterly MD&A selection recognises line-anchored titles and chooses the longest
+span before the next quarterly section. This avoids short table-of-contents
+entries and prose references to earlier reports. An unrecognised heading retains
+the whole-text fallback; unusual layouts and annual sections remain limitations.
+For 8-Ks, repeated item numbers are resolved using their largest disclosure spans,
+then the first body item in document order is selected. Contents page numbers do
+not count as body text; item/signature boundaries are shared with summarisation.
+Only primary filing documents are ingested today. Relevant exhibit discovery and
+source-linked attachment ingestion are a recorded follow-up in the project brief.
 
 ## State, recovery and limitations
 
@@ -66,7 +75,7 @@ The following components describe the target; they are not currently running.
 
 ```mermaid
 flowchart TD
-    SEC[SEC metadata, filings and XBRL facts] --> ETL[Python: extract, validate, transform, load]
+    SEC[SEC metadata, filings, relevant exhibits and XBRL facts] --> ETL[Python: extract, validate, transform, load]
     ETL --> SQL[PostgreSQL: normalised financial facts]
     ETL --> TEXT[Filing sections and source-linked chunks]
     TEXT --> VECTOR[Embeddings: pgvector or Chroma]
@@ -87,7 +96,7 @@ embedding model and historical ingestion range are also unconfigured.
 
 | Planned boundary | Required contract |
 |---|---|
-| Source ingestion | Store snapshot identity, retrieval time, source URL, CIK and accession where applicable; preserve raw payloads and report validation failures. |
+| Source ingestion | Store snapshot identity, retrieval time, source URL, CIK and accession where applicable; link each exhibit document to its parent accession and retain its own source URL/type; preserve raw payloads and report validation failures. |
 | Normalised facts | Retain taxonomy/tag, unit, start/end or instant date, fiscal period, form, filing date and accession. Define selection rules for amendments, duplicate facts and tag mappings before calculating KPIs. Preserve source candidates alongside selected values. |
 | Analytics | Accept validated company/metric/period inputs; use parameterised queries or allowlisted functions. Return value, unit, reporting period, formula and source identities. Refuse ambiguous or unavailable comparisons. |
 | Narrative index | Retain accession, URL, section, chunk offsets and content hash. Record parser/chunking and embedding identities. Rebuild affected chunks or the index when those identities change incompatibly. |
@@ -104,5 +113,7 @@ analytics and research paths work. Database migrations, persistence volumes,
 startup checks, environment locking and recovery commands must be documented
 and verified at implementation time. No deployment is implied by this design.
 
-Dependency locking and representative quality evaluation remain future work;
-see [project checks](project-checks.md).
+The runtime is [locked and clean-install verified](reproducibility.md) for one
+Windows/CPython target. The small [development baseline](../evals/README.md) records
+source and input identities; representative human-reviewed quality evaluation
+remains future work. See [project checks](project-checks.md).

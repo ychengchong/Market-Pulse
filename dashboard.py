@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import streamlit as st
@@ -13,7 +14,25 @@ st.set_page_config(
 )
 
 st.title("Market Pulse")
-st.write("SEC filing event monitor and summarisation pipeline")
+st.write(
+    "Follow company updates through SEC filings. Market Pulse brings recent disclosures "
+    "into one place, with short highlights and links to the original documents."
+)
+st.caption("Use the filters to focus your reading. Open a source filing for the full context.")
+
+
+def display_time(value):
+    try:
+        timestamp = datetime.fromisoformat(value)
+        if timestamp.tzinfo is None:
+            timestamp = timestamp.replace(tzinfo=timezone.utc)
+        return timestamp.astimezone(timezone(timedelta(hours=8))).strftime("%d %b %Y, %H:%M SGT")
+    except (ValueError, TypeError):
+        return "time unavailable"
+
+
+stage_labels = {"metadata": "Filing list", "processing": "Filing text", "summaries": "Summaries"}
+update_details = []
 
 run_reports = {}
 for stage in ("metadata", "processing", "summaries"):
@@ -25,14 +44,14 @@ for stage in ("metadata", "processing", "summaries"):
         if not isinstance(report, dict):
             raise ValueError("Expected a status record")
         run_reports[stage] = report
-        timestamp = report.get("finished_at", report.get("started_at", "unknown time"))
+        timestamp = display_time(report.get("finished_at", report.get("started_at")))
         if not report.get("output_updated"):
             st.warning(
-                f"{stage.title()} run: {report.get('status', 'unknown')} ({timestamp}). "
-                "Its checkpoint was not confirmed updated; displayed results may be from an older run."
+                f"{stage_labels[stage]} update: {report.get('status', 'unknown')} ({timestamp}). "
+                "The update was not confirmed complete; displayed results may be from an older run."
             )
         else:
-            st.caption(f"{stage.title()}: updated {report.get('records', 0)} records at {timestamp}")
+            update_details.append(f"{stage_labels[stage]}: {report.get('records', 0)} records updated {timestamp}")
         failures = [item for item in report.get("items", []) if item.get("status") == "failed"]
         if failures:
             with st.expander(f"{stage.title()} failures ({len(failures)})"):
@@ -42,6 +61,14 @@ for stage in ("metadata", "processing", "summaries"):
                 ], hide_index=True)
     except (OSError, ValueError, TypeError, AttributeError):
         st.warning(f"Unable to read {stage} run status; data freshness is unknown.")
+
+if update_details:
+    summary_report = run_reports.get("summaries", {})
+    if summary_report.get("output_updated"):
+        st.caption(f"Summaries updated {display_time(summary_report.get('finished_at'))}")
+    with st.expander("Data updates"):
+        for detail in update_details:
+            st.caption(detail)
 
 for upstream, downstream in (("metadata", "processing"), ("processing", "summaries")):
     source = run_reports.get(upstream, {})
@@ -87,14 +114,28 @@ forms = sorted({
     for item in summaries
 })
 
+st.sidebar.header("Explore filings")
+st.sidebar.caption("Combine the two filters to narrow the saved results.")
+
 selected_company = st.sidebar.selectbox(
     "Company",
-    ["All"] + companies
+    ["All"] + companies,
+    help="Show one company's filings, or choose All to browse every company."
 )
+st.sidebar.caption("Company selects whose disclosures you see.")
 
 selected_form = st.sidebar.selectbox(
     "Filing form",
-    ["All"] + forms
+    ["All"] + forms,
+    help="Choose a report type. All includes every available filing form."
+)
+st.sidebar.caption("Filing form selects the kind of report. Choose All to include every type.")
+st.sidebar.divider()
+st.sidebar.markdown("**Filing types at a glance**")
+st.sidebar.markdown(
+    "**8-K** ? Company events and announcements\n\n"
+    "**10-Q** ? Quarterly financial report\n\n"
+    "**10-K** ? Annual financial report"
 )
 
 filtered_summaries = []
@@ -117,41 +158,64 @@ column1, column2, column3 = st.columns(3)
 
 column1.metric(
     "Companies monitored",
-    len(companies)
+    len(companies),
+    border=True
 )
 
 column2.metric(
-    "Total summaries",
-    len(summaries)
+    "Saved summaries",
+    len(summaries),
+    border=True
 )
 
 column3.metric(
-    "Visible records",
-    len(filtered_summaries)
+    "Matching filings",
+    len(filtered_summaries),
+    border=True
 )
 
 st.divider()
+st.header("Filings")
+company_label = "All companies" if selected_company == "All" else selected_company
+form_label = "All forms" if selected_form == "All" else selected_form
+st.caption(f"Showing {len(filtered_summaries)} of {len(summaries)} saved filings | {company_label} | {form_label}")
+if summaries and not filtered_summaries:
+    st.info("No filings match these filters. Choose All for company or filing form to broaden the results.")
 
-for item in filtered_summaries:
+
+def render_filing(item, compact=False):
+    st.caption(f"Filed: {item['filing_date']} | Event type: {item['event_type']}")
+    summary = item["summary"]
+    if compact and len(summary) > 450:
+        preview = summary[:450].rsplit(" ", 1)[0].rstrip()
+        st.write(preview + "\u2026")
+        with st.expander("Read full summary"):
+            st.write(summary)
+    else:
+        st.write(summary)
+    st.caption(
+        f"Method: {item['summary_method']} | "
+        f"Source words: {item['source_word_count']:,}"
+    )
+    st.markdown(f"[Open the official SEC filing]({item['filing_url']})")
+
+
+# Group only the filtered 8-K entries; periodic reports remain individual cards.
+cards = {}
+for index, item in enumerate(filtered_summaries):
+    key = ("8-K", item["company"], item["ticker"]) if item["form"] == "8-K" else ("report", index)
+    cards.setdefault(key, []).append(item)
+
+for entries in cards.values():
+    item = entries[0]
     with st.container(border=True):
-        st.subheader(
-            f"{item['company']} ({item['ticker']}) - "
-            f"{item['form']}"
-        )
-
-        st.caption(
-            f"Filed: {item['filing_date']} | "
-            f"Event type: {item['event_type']}"
-        )
-
-        st.write(item["summary"])
-
-        st.caption(
-            f"Method: {item['summary_method']} | "
-            f"Source words: {item['source_word_count']:,}"
-        )
-
-        st.markdown(
-            f"[Open the official SEC filing]"
-            f"({item['filing_url']})"
-        )
+        if item["form"] == "8-K":
+            st.subheader(f"{item['company']} ({item['ticker']}) - Recent 8-K events")
+            ordered = sorted(entries, key=lambda record: record["filing_date"], reverse=True)
+            for index, event in enumerate(ordered):
+                if index:
+                    st.divider()
+                render_filing(event, compact=True)
+        else:
+            st.subheader(f"{item['company']} ({item['ticker']}) - {item['form']}")
+            render_filing(item)

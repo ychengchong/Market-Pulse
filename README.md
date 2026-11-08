@@ -11,22 +11,28 @@ Build financial analytics first, then retrieval and cited answers, then combine
 them through controlled query routing. These capabilities are planned; the
 current implementation is the filing monitor described below. See the
 [project brief and delivery milestones](docs/problem.md) and
-[target architecture](docs/architecture.md#target-architecture-planned).
+[target architecture](docs/architecture.md#target-architecture-planned). The [ordered upgrade roadmap](docs/problem.md#agreed-upgrade-order)
+records implementation status, branch names and the exhibit-ingestion prerequisite
+before LLM extraction.
 
 ## Setup
 
-Run commands from the repository root. Create and activate a Python environment:
+The verified environment is **CPython 3.14.5 on Windows AMD64**. From the
+repository root, create a fresh environment (use another name if `.venv` already
+exists):
 
 ```powershell
-python -m venv .venv
+py -3.14 -m venv .venv
 & .\.venv\Scripts\Activate.ps1
-python -m pip install requests beautifulsoup4 lxml streamlit
+python -m pip install pip==26.1.1
+python -m pip install --require-hashes -r requirements.txt
+python -m pip check
+python -m scripts.environment
 ```
 
-On macOS/Linux, use `python3 -m venv .venv` and
-`source .venv/bin/activate` instead. Dependencies are not yet locked; this setup
-does not establish a reproducible environment. Cleanup checks used Python
-3.14.5; the full application has not been verified in that environment.
+The lock pins all runtime dependencies and verifies their wheel hashes. It is
+specific to this Python/OS target. See [reproducibility](docs/reproducibility.md)
+for clean installation, lock regeneration and support limitations.
 
 Before accessing the SEC, set `SEC_HEADERS["User-Agent"]` in `config.py` to
 identify your project with a genuine contact email. The same file configures
@@ -50,7 +56,13 @@ python -m streamlit run dashboard.py
 
 The commands above use PowerShell; stop on any failure when running stages
 manually on other shells. A failed stage returns a nonzero exit code. The
-dashboard may still be opened to inspect previous results and failure details.
+dashboard may still be opened to inspect previous results and failure details. 8-Ks are grouped in
+one card per company, with dated entries ordered newest first and individual
+source links. Long 8-K summaries have expandable full text; 10-Qs and 10-Ks keep
+separate cards. Visible-record counts continue to count filings, not cards. The page
+introduces Market Pulse, explains the company/form filters and filing types, and
+shows the active selection. Routine refresh details are collapsed under Data
+updates with Singapore timestamps; incomplete-update warnings remain visible.
 
 The first two steps require network access for fresh data. Processing reuses
 nonempty HTML files by accession number. Saved data is generated locally and
@@ -82,7 +94,12 @@ summarize_filings.py   Summary generation entry point
 dashboard.py           Streamlit entry point
 src/                   Shared SEC, download, parsing, storage and summary code
 docs/                  Project brief, architecture and verification guidance
-tests/                 Offline ingestion and dashboard regression tests
+tests/                 Ingestion, dashboard and baseline integrity tests
+evals/                 Frozen development cases, references and offline runner
+reports/               Preserved before/after rule-based baseline results
+scripts/               Lock generation and environment verification
+requirements.in        Direct runtime dependency pins
+requirements.txt       Complete Windows/CPython wheel hash lock
 ```
 
 The entry points serve different pipeline stages; reusable code lives in `src/`.
@@ -105,7 +122,15 @@ python -B -m unittest discover -s tests -v
 ```
 
 The suite uses mocked network responses, real HTML parsing, and Streamlit AppTest.
-No dependency lockfile exists yet. Offline checks do not verify current SEC
-connectivity or browser appearance. The form-aware summariser targets `8-K` and `10-Q`; `10-K` uses the
-`10-Q` rules as a fallback. Highlight quality has not been evaluated against
-human-reviewed references.
+Reproduce the saved development baseline:
+
+```powershell
+python -m evals.run --verify reports/rule-based-baseline-v2.json
+```
+
+The [evaluation suite](evals/README.md) has 15 frozen development cases with
+agent-reviewed references; human review remains pending. Preserved results are
+in [reports](reports/README.md). This small excerpt/synthetic suite does not
+establish production-wide quality. Offline checks do not verify current SEC
+connectivity or browser appearance. The form-aware summariser targets `8-K` and
+`10-Q`; `10-K` still uses the `10-Q` rules as a fallback.

@@ -103,27 +103,38 @@ def split_sentences(text):
     return restored_sentences
 
 
+def _find_8k_section_end(lines, start_index):
+    """Use the same item/signature boundary for selection and summarisation."""
+    for index in range(start_index + 1, len(lines)):
+        if (re.match(r"^Item\s+[0-9]+\.[0-9]+", lines[index], re.IGNORECASE)
+                or lines[index].upper().startswith("SIGNATURE")):
+            return index
+    return len(lines)
+
+
 def find_primary_8k_item(lines):
-    """
-    Find the first important 8-K item.
+    """Choose the first body item, excluding short duplicate TOC entries.
 
-    Item 9.01 is normally only the exhibits section, so it is ignored.
+    The same item number often appears in both the contents and the disclosure.
+    Keep the largest body span per item number, then preserve document order.
+    Item 9.01 is an exhibits list rather than a primary event.
     """
-
+    sections = {}
     for index, line in enumerate(lines):
-        match = re.match(
-            r"^Item\s+([0-9]+\.[0-9]+)",
-            line,
-            flags=re.IGNORECASE
-        )
-
-        if match:
-            item_number = match.group(1)
-
-            if item_number != "9.01":
-                return index, item_number
-
-    return None, None
+        match = re.match(r"^Item\s+([0-9]+\.[0-9]+)", line, re.IGNORECASE)
+        if not match or match[1] == "9.01":
+            continue
+        end = _find_8k_section_end(lines, index)
+        # Page numbers alone cannot turn a TOC entry into disclosure content.
+        size = sum(len(value) for value in lines[index + 1:end] if re.search(r"[A-Za-z]", value))
+        previous = sections.get(match[1])
+        if previous is None or size > previous[0]:
+            sections[match[1]] = (size, index)
+    if not sections:
+        return None, None
+    substantive = [(index, item) for item, (size, index) in sections.items() if size]
+    candidates = substantive or [(index, item) for item, (_, index) in sections.items()]
+    return min(candidates)
 
 
 def summarise_8k(text, maximum_sentences=4):
@@ -158,23 +169,7 @@ def summarise_8k(text, maximum_sentences=4):
             "summary_method": "rule-based form-aware extractive",
         }
 
-    end_index = len(lines)
-
-    # Stop when the next item or signature section starts.
-    for index in range(start_index + 1, len(lines)):
-        current_line = lines[index]
-
-        if re.match(
-            r"^Item\s+[0-9]+\.[0-9]+",
-            current_line,
-            flags=re.IGNORECASE
-        ):
-            end_index = index
-            break
-
-        if current_line.upper().startswith("SIGNATURE"):
-            end_index = index
-            break
+    end_index = _find_8k_section_end(lines, start_index)
 
     section_lines = lines[start_index + 1:end_index]
     section_text = " ".join(section_lines)
@@ -215,40 +210,32 @@ def summarise_8k(text, maximum_sentences=4):
 
 
 def extract_mda_section(text):
+    """Choose a line-anchored MD&A section, excluding TOC and prose references.
+
+    A title can occur in the table of contents and in references to older
+    reports. Among real heading lines, use the longest span before the next
+    quarterly section. This avoids mistaking a short TOC entry for the body.
+    Preserve whole-text fallback when a heading cannot be recognised.
     """
-    Extract Management's Discussion and Analysis from a 10-Q.
-
-    The last heading is used because the first occurrence is commonly
-    only a table-of-contents entry.
-    """
-
-    compact_text = normalise_text(text)
-
-    pattern = re.compile(
-        r"management[’']s discussion and analysis "
-        r"of financial condition and results of operations",
-        flags=re.IGNORECASE
+    title = (
+        r"management['\u2019]s\s+discussion\s+and\s+analysis\s+"
+        r"of\s+financial\s+condition\s+and\s+results\s+of\s+operations"
     )
-
-    matches = list(pattern.finditer(compact_text))
-
-    if not matches:
-        return compact_text
-
-    start_position = matches[-1].start()
-    section = compact_text[start_position:]
-
-    end_match = re.search(
-        r"\bItem\s*3[.\s]+Quantitative",
-        section[100:],
-        flags=re.IGNORECASE
+    headings = list(re.finditer(
+        r"^[^\S\n]*(?:item[^\S\n]*2\.?[^\S\n]*)?" + title + r"[^\S\n]*$",
+        text, flags=re.IGNORECASE | re.MULTILINE
+    ))
+    if not headings:
+        return normalise_text(text)
+    boundary = re.compile(
+        r"^[^\S\n]*(?:item[^\S\n]+(?:3|4)\b[^\n]*|part[^\S\n]+ii\b[^\n]*)",
+        flags=re.IGNORECASE | re.MULTILINE
     )
-
-    if end_match:
-        end_position = 100 + end_match.start()
-        section = section[:end_position]
-
-    return section
+    sections = []
+    for heading in headings:
+        stop = boundary.search(text, heading.end())
+        sections.append(text[heading.end():stop.start() if stop else len(text)])
+    return normalise_text(max(sections, key=lambda section: len(normalise_text(section))))
 
 
 def score_10q_sentence(sentence):
