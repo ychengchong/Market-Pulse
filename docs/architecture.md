@@ -1,6 +1,6 @@
 # Architecture and component contracts
 
-## Flow and boundaries
+## Implemented flow and boundaries
 
 ```text
 SEC submissions -> main.py -> data/filings.json
@@ -47,6 +47,51 @@ that form and uses `10-Q` rules for all other supplied forms, including `10-K`.
   remain available. Restart reads files; it does not restore execution progress.
 - The dashboard is local. Authentication, tenant isolation, production readiness
   gates, deployment automation and release manifests are not implemented.
+
+## Target architecture (planned)
+
+The delivery order and acceptance evidence live in [the project brief](problem.md).
+The following components describe the target; they are not currently running.
+
+```mermaid
+flowchart TD
+    SEC[SEC metadata, filings and XBRL facts] --> ETL[Python: extract, validate, transform, load]
+    ETL --> SQL[PostgreSQL: normalised financial facts]
+    ETL --> TEXT[Filing sections and source-linked chunks]
+    TEXT --> VECTOR[Embeddings: pgvector or Chroma]
+    SQL --> ANALYTICS[Controlled SQL and Python analytics]
+    VECTOR --> RAG[Retrieval and cited narrative answers]
+    QUERY[User question] --> ROUTER[Query router]
+    ROUTER --> ANALYTICS
+    ROUTER --> RAG
+    ANALYTICS --> ANSWER[Evidence-backed result composition]
+    RAG --> ANSWER
+    ANSWER --> UI[Streamlit: Dashboard, Ask AI, Company comparison]
+```
+
+PostgreSQL is the planned home for structured analytics. The vector-store choice
+remains open: pgvector can share PostgreSQL persistence, while Chroma would be
+a separate store. Choose one when implementing retrieval. Provider/model choice,
+embedding model and historical ingestion range are also unconfigured.
+
+| Planned boundary | Required contract |
+|---|---|
+| Source ingestion | Store snapshot identity, retrieval time, source URL, CIK and accession where applicable; preserve raw payloads and report validation failures. |
+| Normalised facts | Retain taxonomy/tag, unit, start/end or instant date, fiscal period, form, filing date and accession. Define selection rules for amendments, duplicate facts and tag mappings before calculating KPIs. Preserve source candidates alongside selected values. |
+| Analytics | Accept validated company/metric/period inputs; use parameterised queries or allowlisted functions. Return value, unit, reporting period, formula and source identities. Refuse ambiguous or unavailable comparisons. |
+| Narrative index | Retain accession, URL, section, chunk offsets and content hash. Record parser/chunking and embedding identities. Rebuild affected chunks or the index when those identities change incompatibly. |
+| Retrieval and generation | Return evidence with citations. Distinguish absent evidence from retrieval/provider failure; abstain when unsupported. Retrieved prose cannot authorise tool calls or change system instructions. |
+| Router and composition | Choose analytics, retrieval or both. Take numbers from analytical outputs and explanations from retrieved evidence; retain provenance through final rendering. |
+
+Loads must be repeatable without duplicate selected facts or chunks. Keep filing
+date/availability separate from reporting period for historical comparisons.
+Any future point-in-time research must exclude information filed after its
+cutoff. Planned evaluation must exercise these boundaries before live claims.
+
+FastAPI and Docker are planned for the integration milestone, after the local
+analytics and research paths work. Database migrations, persistence volumes,
+startup checks, environment locking and recovery commands must be documented
+and verified at implementation time. No deployment is implied by this design.
 
 Dependency locking and representative quality evaluation remain future work;
 see [project checks](project-checks.md).

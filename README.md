@@ -4,6 +4,15 @@ Market Pulse collects SEC filing metadata for Nvidia, Microsoft, Alphabet, Amazo
 downloads filing HTML, extracts readable text, and creates rule-based highlights
 for a local Streamlit dashboard. No generative AI API key is required.
 
+The project goal is an integrated **financial analytics and AI research
+platform**: PostgreSQL-backed financial KPIs and company comparisons, plus
+filing-based answers with source citations, in one Streamlit application.
+Build financial analytics first, then retrieval and cited answers, then combine
+them through controlled query routing. These capabilities are planned; the
+current implementation is the filing monitor described below. See the
+[project brief and delivery milestones](docs/problem.md) and
+[target architecture](docs/architecture.md#target-architecture-planned).
+
 ## Setup
 
 Run commands from the repository root. Create and activate a Python environment:
