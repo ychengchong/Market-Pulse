@@ -1,16 +1,24 @@
 # Companies that Market Pulse will monitor
 WATCHLIST = {
-    "Apple": {
-        "ticker": "AAPL",
-        "cik": "0000320193"
+    "Nvidia": {
+        "ticker": "NVDA",
+        "cik": "0001045810"
     },
     "Microsoft": {
         "ticker": "MSFT",
         "cik": "0000789019"
     },
-    "Tesla": {
-        "ticker": "TSLA",
-        "cik": "0001318605"
+    "Alphabet": {
+        "ticker": "GOOGL",
+        "cik": "0001652044"
+    },
+    "Amazon": {
+        "ticker": "AMZN",
+        "cik": "0001018724"
+    },
+    "Apple": {
+        "ticker": "AAPL",
+        "cik": "0000320193"
     }
 }
 

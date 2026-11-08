@@ -1,6 +1,6 @@
 ﻿# Market Pulse
 
-Market Pulse collects SEC filing metadata for Apple, Microsoft, and Tesla,
+Market Pulse collects SEC filing metadata for Nvidia, Microsoft, Alphabet, Amazon, and Apple,
 downloads filing HTML, extracts readable text, and creates rule-based highlights
 for a local Streamlit dashboard. No generative AI API key is required.
 
@@ -42,7 +42,7 @@ python -m streamlit run dashboard.py
 The first two steps require network access for fresh data. Processing reuses
 nonempty HTML files by accession number. Saved data is generated locally and
 ignored by Git. To reopen existing results, run only the dashboard command.
-Counts depend on available filings and processing failures; 15 is a configured
+Counts depend on available filings and processing failures; 25 is a configured
 maximum for the default watchlist, not a guaranteed result.
 
 ## Repository
