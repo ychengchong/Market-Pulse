@@ -1,78 +1,38 @@
-import json
 from pathlib import Path
 
 from src.summarizer import create_summary
+from src.storage import load_records, start_stage, finish_stage
 
 
 def main():
-    processed_file = Path("data/processed_filings.json")
-    summaries_file = Path("data/summaries.json")
-
-    if not processed_file.exists():
-        print("data/processed_filings.json was not found.")
-        print("Run process_filings.py first.")
-        return
-
-    with processed_file.open("r", encoding="utf-8") as json_file:
-        filings = json.load(json_file)
-
-    summaries = []
-
-    for number, filing in enumerate(filings, start=1):
-        company = filing["company"]
-        form = filing["form"]
-
-        print(
-            f"Summarising {number}/{len(filings)}: "
-            f"{company} {form}"
-        )
-
-        if filing.get("processing_status") != "successful":
-            print("Skipped because HTML processing failed.")
-            continue
-
-        text_path = Path(filing["text_path"])
-
-        if not text_path.exists():
-            print(f"Skipped because {text_path} was not found.")
-            continue
-
-        clean_text = text_path.read_text(encoding="utf-8")
-
-        summary_result = create_summary(
-            clean_text,
-            form=filing["form"]
-        )
-
-        summary_record = {
-            "company": filing["company"],
-            "ticker": filing["ticker"],
-            "cik": filing["cik"],
-            "form": filing["form"],
-            "filing_date": filing["filing_date"],
-            "accession_number": filing["accession_number"],
-            "filing_url": filing["filing_url"],
-            "event_type": summary_result["event_type"],
-            "summary": summary_result["summary"],
-            "source_word_count": summary_result["source_word_count"],
-            "summary_method": summary_result["summary_method"]
-        }
-
-        summaries.append(summary_record)
-
-    with summaries_file.open("w", encoding="utf-8") as json_file:
-        json.dump(
-            summaries,
-            json_file,
-            indent=4,
-            ensure_ascii=False
-        )
-
-    print("\n" + "=" * 60)
-    print(f"Summaries created: {len(summaries)}")
-    print(f"Saved to: {summaries_file}")
-    print("=" * 60)
+    report = start_stage("summaries")
+    output = "data/summaries.json"
+    try:
+        filings = load_records("data/processed_filings.json")
+    except (OSError, ValueError) as error:
+        return finish_stage(report, [], [{"status": "failed", "error": str(error)}], output)
+    summaries, items = [], []
+    for filing in filings:
+        item = {key: filing.get(key) for key in ("company", "form", "accession_number")}
+        try:
+            if filing.get("processing_status") != "successful":
+                raise ValueError(f"Processing failed: {filing.get('processing_error') or 'unknown error'}")
+            text = Path(filing["text_path"]).read_text(encoding="utf-8")
+            if not text.strip():
+                raise ValueError("The processed filing contains no readable text")
+            result = create_summary(text, form=filing["form"])
+            record = {key: filing[key] for key in (
+                "company", "ticker", "cik", "form", "filing_date", "accession_number", "filing_url"
+            )}
+            record.update(result)
+            summaries.append(record)
+            item.update(status="successful", error=None)
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            item.update(status="failed", error=str(error))
+            print(f"{filing.get('accession_number', 'Invalid record')}: {error}")
+        items.append(item)
+    return finish_stage(report, summaries, items, output)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

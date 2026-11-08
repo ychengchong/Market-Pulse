@@ -1,225 +1,67 @@
-import json
-import time
 from pathlib import Path
-
 import requests
 
 from config import SEC_HEADERS
 from src.filing_downloader import download_filing_html
 from src.html_parser import html_to_text
+from src.sec_client import validate_filing
+from src.sec_http import SecAccessError, validate_html
+from src.storage import atomic_write_text, load_records, start_stage, finish_stage
 
 
-# Use 3 while testing.
-# Use None to process every filing.
+# Set to an integer for a bounded processing run; None processes all records.
 PROCESS_LIMIT = None
 
 
 def main():
-    filings_file = Path("data/filings.json")
-    raw_html_folder = Path("data/raw_html")
-    clean_text_folder = Path("data/clean_text")
-    output_file = Path("data/processed_filings.json")
-
-    # Create the output folders if they do not exist
-    raw_html_folder.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    clean_text_folder.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    # main.py must create this first
-    if not filings_file.exists():
-        print("data/filings.json was not found.")
-        print("Run main.py first.")
-        return
-
-    # Load the filing metadata
-    with filings_file.open(
-        "r",
-        encoding="utf-8"
-    ) as json_file:
-        filings = json.load(json_file)
-
-    # Decide whether to process some or all filings
-    if PROCESS_LIMIT is None:
-        filings_to_process = filings
-    else:
-        filings_to_process = filings[:PROCESS_LIMIT]
-
-    print(f"Loaded {len(filings)} filing records.")
-    print(f"Processing {len(filings_to_process)} filings.")
-
-    processed_filings = []
-    successful = 0
-    failed = 0
-
-    for number, filing in enumerate(
-        filings_to_process,
-        start=1
-    ):
-        company = filing["company"]
-        form = filing["form"]
-        accession_number = filing["accession_number"]
-        filing_url = filing["filing_url"]
-
-        print(
-            f"\nProcessing {number}/"
-            f"{len(filings_to_process)}: "
-            f"{company} {form}"
-        )
-
-        # Create the paths before downloading
-        html_path = (
-            raw_html_folder /
-            f"{accession_number}.html"
-        )
-
-        text_path = (
-            clean_text_folder /
-            f"{accession_number}.txt"
-        )
-
-        # Copy the original filing metadata
-        processed_record = filing.copy()
-
+    report = start_stage("processing")
+    output = "data/processed_filings.json"
+    try:
+        filings = load_records("data/filings.json")
+    except (OSError, ValueError) as error:
+        return finish_stage(report, [], [{"status": "failed", "error": str(error)}], output)
+    if PROCESS_LIMIT is not None:
+        filings = filings[:PROCESS_LIMIT]
+    records, items = [], []
+    blocked = False
+    for filing in filings:
+        record = filing.copy()
+        item = {key: filing.get(key) for key in ("company", "form", "accession_number")}
         try:
-            # Use the saved HTML if it already exists
-            if (
-                html_path.exists()
-                and html_path.stat().st_size > 0
-            ):
-                print("Using previously downloaded HTML.")
-
-                html = html_path.read_text(
-                    encoding="utf-8"
-                )
-
-            else:
-                print("Downloading filing from the SEC...")
-
-                html = download_filing_html(
-                    filing_url=filing_url,
-                    headers=SEC_HEADERS
-                )
-
-                # Save the raw HTML
-                html_path.write_text(
-                    html,
-                    encoding="utf-8"
-                )
-
-                print(f"HTML saved: {html_path}")
-
-            # Convert the HTML into readable text
-            clean_text = html_to_text(html)
-
-            if not clean_text.strip():
-                raise ValueError(
-                    "No readable text was extracted."
-                )
-
-            # Save the cleaned text
-            text_path.write_text(
-                clean_text,
-                encoding="utf-8"
-            )
-
-            processed_record["html_path"] = (
-                html_path.as_posix()
-            )
-
-            processed_record["text_path"] = (
-                text_path.as_posix()
-            )
-
-            processed_record["text_characters"] = (
-                len(clean_text)
-            )
-
-            processed_record["processing_status"] = (
-                "successful"
-            )
-
-            processed_record["processing_error"] = None
-
-            print(f"Text saved: {text_path}")
-
-            print(
-                f"Characters extracted: "
-                f"{len(clean_text):,}"
-            )
-
-            successful += 1
-
-        except requests.RequestException as error:
-            processed_record["processing_status"] = (
-                "failed"
-            )
-
-            processed_record["processing_error"] = str(error)
-            processed_record["html_path"] = None
-            processed_record["text_path"] = None
-            processed_record["text_characters"] = 0
-
-            print(f"Download failed: {error}")
-
-            failed += 1
-
-        except OSError as error:
-            processed_record["processing_status"] = (
-                "failed"
-            )
-
-            processed_record["processing_error"] = str(error)
-            processed_record["html_path"] = None
-            processed_record["text_path"] = None
-            processed_record["text_characters"] = 0
-
-            print(f"Unable to read or save file: {error}")
-
-            failed += 1
-
-        except Exception as error:
-            processed_record["processing_status"] = (
-                "failed"
-            )
-
-            processed_record["processing_error"] = str(error)
-            processed_record["html_path"] = None
-            processed_record["text_path"] = None
-            processed_record["text_characters"] = 0
-
-            print(f"Unexpected processing error: {error}")
-
-            failed += 1
-
-        processed_filings.append(processed_record)
-
-        # Pause before moving to the next filing
-        time.sleep(0.2)
-
-    # Save information about all successful and failed records
-    with output_file.open(
-        "w",
-        encoding="utf-8"
-    ) as json_file:
-        json.dump(
-            processed_filings,
-            json_file,
-            indent=4,
-            ensure_ascii=False
-        )
-
-    print("\n" + "=" * 60)
-    print(f"Successfully processed: {successful}")
-    print(f"Failed: {failed}")
-    print(f"Results saved to: {output_file}")
-    print("=" * 60)
+            validate_filing(filing)
+            accession = filing["accession_number"]
+            html_path = Path("data/raw_html") / f"{accession}.html"
+            text_path = Path("data/clean_text") / f"{accession}.txt"
+            html = None
+            if html_path.exists():
+                try:
+                    html = validate_html(html_path.read_text(encoding="utf-8"))
+                except (ValueError, SecAccessError):
+                    print(f"Ignoring invalid cached HTML for {accession}.")
+            if html is None:
+                if blocked:
+                    raise SecAccessError("Not requested after an SEC access denial or persistent rate limit earlier in this run.")
+                html = download_filing_html(filing["filing_url"], SEC_HEADERS)
+                atomic_write_text(html_path, html)
+            text = html_to_text(html)
+            if not text.strip():
+                raise ValueError("No readable text was extracted")
+            atomic_write_text(text_path, text)
+            record.update(html_path=html_path.as_posix(), text_path=text_path.as_posix(),
+                          text_characters=len(text), processing_status="successful", processing_error=None)
+            item.update(status="successful", error=None)
+            records.append(record)
+        except (requests.RequestException, OSError, ValueError, KeyError, TypeError) as error:
+            blocked = blocked or isinstance(error, SecAccessError)
+            record.update(html_path=None, text_path=None, text_characters=0,
+                          processing_status="failed", processing_error=str(error))
+            item.update(status="failed", error=str(error))
+            print(f"{filing.get('accession_number', 'Invalid record')}: {error}")
+        # Attempts include failed records even when the previous checkpoint is kept.
+        item["record"] = record
+        items.append(item)
+    return finish_stage(report, records, items, output)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

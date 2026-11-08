@@ -29,18 +29,24 @@ highlights remain the baseline for future comparisons.
 | 2. Research assistant | Parse filing sections, chunk text, embed/index it in pgvector or Chroma, retrieve passages and generate cited answers. | Evaluate retrieval separately from answers. Review citations and groundedness on representative questions, including missing evidence and conflicting or amended disclosures. |
 | 3. Integration | Route numerical, narrative and mixed questions to controlled analytics functions, retrieval or both; add FastAPI and Docker packaging once the core paths work. | Demonstrate numerical provenance and narrative citations in one answer; evaluate routing and failure handling; verify a documented local startup and persistence workflow. |
 
-Immediate priority: establish reliable source access and an offline ingestion
-fixture, then implement a small XBRL-to-PostgreSQL path before adding an LLM.
-The observed filing-download 403 failures must be diagnosed and a successful
-download demonstrated; changing the contact header alone is not proof of repair.
+Upgrade 1 implementation adds bounded SEC requests, validation, atomic checkpoints,
+per-item run reports, explicit dashboard warnings and offline regression tests.
+A live probe successfully retrieved metadata and one filing without changing
+existing data; this is bounded evidence, not a guarantee of future availability.
+Historical 403 failures indicate access denial; their exact earlier cause was not
+proven. The current identifying header was already configured before this upgrade.
+
+Next in the agreed sequence: reproducibility and the reviewed evaluation baseline,
+then the XBRL-to-PostgreSQL analytics path before adding an LLM.
 
 The supplied development-duration estimates are planning suggestions, not
 committed delivery dates. No paid provider or external deployment is selected.
 
 ## Agreed upgrade order
 
-This is the agreed implementation sequence. These are planned upgrades, not
-completed capabilities; the three milestones above group the same work.
+This is the agreed implementation sequence. Upgrade 1 has an implementation
+and verification described above; the remaining upgrades are planned. The three
+milestones above group the same work.
 
 1. **Reliable ingestion:** diagnose SEC download failures, validate responses,
    expose per-filing failures and prevent failed runs from silently replacing

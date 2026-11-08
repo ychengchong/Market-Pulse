@@ -18,28 +18,39 @@ deployment record is configured.
 
 | Capability | Implementation | Contract and failure behaviour |
 |---|---|---|
-| Metadata retrieval | `src/sec_client.py` | Returns records with `company`, `ticker`, `cik`, `form`, `filing_date`, `accession_number`, `document`, and `filing_url`. Dates are SEC strings; identifiers are strings. Request failures propagate; `main.py` logs them and continues to the next company. |
-| Metadata storage | `src/storage.py` | Writes a UTF-8 JSON array to `data/filings.json` by default. Filesystem errors propagate. |
-| HTML download | `src/filing_downloader.py` | Returns HTML text. Connection errors and timeouts are retried up to three attempts with exponential waits; HTTP failures propagate immediately. |
+| Metadata retrieval | `src/sec_client.py` | Returns records with `company`, `ticker`, `cik`, `form`, `filing_date`, `accession_number`, `document`, and `filing_url`. Dates are SEC strings; identifiers are strings. Malformed or misaligned metadata is rejected. `main.py` records company failures; a 403 stops further requests in that run. |
+| Metadata storage | `src/storage.py` | Writes UTF-8 JSON through a same-directory temporary file, flush/fsync and atomic replacement. Filesystem errors propagate; incomplete writes do not truncate the previous checkpoint. |
+| HTML download | `src/filing_downloader.py` | Uses shared `src/sec_http.py`: five request starts/second per sequential process, timeouts, at most three attempts for connection failures, 429 and selected 5xx responses. Honours Retry-After up to 60 seconds; longer waits stop the run. A 403 is actionable and is not retried. Empty, non-HTML and known SEC block pages are rejected. |
 | Text extraction | `src/html_parser.py` | BeautifulSoup with lxml removes scripts, hidden elements and selected XBRL tags, then returns nonempty lines. The processing script treats empty output as failure. |
-| Processing checkpoint | `process_filings.py` | Copies metadata and adds `html_path`, `text_path`, `text_characters`, `processing_status`, and `processing_error`. Failed records have null paths, zero characters and an error string. Records remain in the checkpoint. |
-| Summary generation | `src/summarizer.py`, `summarize_filings.py` | Summary records retain source metadata except `document`, adding `event_type`, `summary`, `source_word_count`, and `summary_method`. Failed processing records and missing text files are skipped with console messages. Empty or unsuitable text produces explanatory fallback text. |
-| Display | `dashboard.py` | Loads the summaries array and filters by company/form. A missing file produces a Streamlit error and stops the page. Malformed JSON or missing fields are not recovered. |
+| Processing checkpoint | `process_filings.py` | Copies metadata and adds `html_path`, `text_path`, `text_characters`, `processing_status`, and `processing_error`. Failed attempts have null paths, zero characters and an error string in `data/processing_status.json`. The main checkpoint is replaced only by a complete nonempty successful batch. |
+| Summary generation | `src/summarizer.py`, `summarize_filings.py` | Summary records retain source metadata except `document`, adding `event_type`, `summary`, `source_word_count`, and `summary_method`. Failed processing records and missing/empty text are reported per filing; an incomplete batch preserves the previous summaries. Empty or unsuitable text produces explanatory fallback text. |
+| Display | `dashboard.py` | Loads the summaries array and filters by company/form. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
 
-The JSON contracts are currently implicit in these implementations; they have
-no schema version or formal validation. The summariser selects `8-K` rules for
+Metadata arrays, filing identities, input-array shape, downloaded HTML and
+dashboard summary fields are validated. These contracts do not yet have a
+formal schema version. The summariser selects `8-K` rules for
 that form and uses `10-Q` rules for all other supplied forms, including `10-K`.
 
 ## State, recovery and limitations
 
-- Each stage overwrites its JSON output. Writes are not atomic, and concurrent
-  runs are unsupported. There is no append-only audit history.
-- Reprocessing reuses any nonempty HTML cache file with the same accession
-  number, regenerates text and overwrites the processing checkpoint. Cache
-  compatibility is not checked against URL, code or dependency identity.
-- Metadata collection still writes an array when some or all companies fail.
-  Summary output omits failed records; consult the processing checkpoint and
-  console output for coverage.
+- Each stage publishes its JSON checkpoint only for a complete nonempty batch.
+  Failures, partial batches and empty results exit with code 1 and preserve the
+  previous checkpoint byte-for-byte. Success exits with code 0. This conservative
+  policy does not merge old and new snapshots; correct the failures and rerun.
+- `data/metadata_status.json`, `data/processing_status.json` and
+  `data/summaries_status.json` describe the latest attempt, with UTC timestamps,
+  status, per-item errors, record counts and `output_updated`. Reports are written
+  as running before work begins. Checkpoint and report replacement are separate
+  operations: interruption can leave freshness unconfirmed, which the UI warns
+  about. Reports are overwritten each run, not an append-only audit history.
+- Reprocessing reuses valid nonempty HTML by accession number. Known block pages
+  and invalid cached content are refetched. Cache compatibility is not checked
+  against code/dependency identities or content hashes. Successfully fetched raw
+  files and extracted text may be saved even when the batch checkpoint is retained.
+- Run stages sequentially, stopping on a nonzero exit. Downstream scripts can read
+  older checkpoints if manually run after an upstream failure; the dashboard
+  displays attempt timestamps and warnings. Concurrent runs are unsupported;
+  request pacing is process-local, not a global cross-process rate limiter.
 - To change parsing rules, rerun processing and summarisation. To change summary
   rules, rerun summarisation. To fetch fresh HTML, deliberately remove the
   relevant local cached HTML before reprocessing.
