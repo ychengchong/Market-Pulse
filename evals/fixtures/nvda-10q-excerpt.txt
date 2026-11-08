@@ -1,0 +1,13 @@
+TABLE OF CONTENTS
+Item 2.
+Management’s Discussion and Analysis of Financial Condition and Results of Operations
+25
+Item 3.
+Quantitative and Qualitative Disclosures About Market Risk
+33
+Item 2. Management’s Discussion and Analysis of Financial Condition and Results of Operations
+Results of Operations
+Data Center revenue was $89.0 billion, up 117% from a year ago and up 18% sequentially, driven by the ramp of our Blackwell Ultra infrastructure. Hyperscale revenue more than doubled from a year ago and increased 13% sequentially on the strength of Blackwell Ultra. ACIE revenue increased 138% from a year ago and 25% sequentially driven by end-demand from AI natives, enterprises, and sovereign customers, as well as hyperscalers utilizing AI clouds. Shipments of Data Center Hopper products to China during the second quarter of fiscal year 2027 were less than 1% of Data Center revenue.
+Other than the contractual obligations described in Note 10 of the Notes to Condensed Consolidated Financial Statements in Part I, Item 1 of this Quarterly Report on Form 10-Q, there were no material changes outside the ordinary course of business in our contractual obligations from those disclosed in our Annual Report on Form 10-K for the fiscal year ended January 25, 2026. Refer to Item 7, “Management’s Discussion and Analysis of Financial Condition and Results of Operations - Liquidity and Capital Resources” in our Annual Report on Form 10-K for the fiscal year ended January 25, 2026, for a description of our contractual obligations.
+Item 3. Quantitative and Qualitative Disclosures About Market Risk
+See accompanying disclosures.

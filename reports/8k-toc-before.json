@@ -1,0 +1,427 @@
+{
+  "suite_id": "filing-baseline-v2",
+  "review": {
+    "reviewer": "Codex",
+    "status": "agent-reviewed",
+    "human_review": "pending"
+  },
+  "scope": "Development diagnostics only. Eight adapted cached excerpts and seven synthetic cases. No final holdout or production-quality claim.",
+  "total": 15,
+  "passed": 12,
+  "errors": 0,
+  "fallback_count": 5,
+  "check_failures": {
+    "fallback_correct": 3,
+    "required_evidence_present": 3
+  },
+  "slices": {
+    "form": {
+      "10-K": {
+        "total": 1,
+        "passed": 1
+      },
+      "10-Q": {
+        "total": 9,
+        "passed": 9
+      },
+      "8-K": {
+        "total": 5,
+        "passed": 2
+      }
+    },
+    "kind": {
+      "adapted_cached_excerpt": {
+        "total": 8,
+        "passed": 5
+      },
+      "synthetic": {
+        "total": 7,
+        "passed": 7
+      }
+    },
+    "ticker": {
+      "AAPL": {
+        "total": 1,
+        "passed": 1
+      },
+      "AMZN": {
+        "total": 4,
+        "passed": 1
+      },
+      "GOOGL": {
+        "total": 1,
+        "passed": 1
+      },
+      "MSFT": {
+        "total": 1,
+        "passed": 1
+      },
+      "NVDA": {
+        "total": 1,
+        "passed": 1
+      },
+      "SYNTHETIC": {
+        "total": 7,
+        "passed": 7
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "nvda-10q-excerpt",
+      "ticker": "NVDA",
+      "form": "10-Q",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "d8b6880e97b8508f99ad0811362710bf0599cd27406cd8741d48d31b21774185",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Results of Operations Data Center revenue was $89.0 billion, up 117% from a year ago and up 18% sequentially, driven by the ramp of our Blackwell Ultra infrastructure. Hyperscale revenue more than doubled from a year ago and increased 13% sequentially on the strength of Blackwell Ultra. ACIE revenue increased 138% from a year ago and 25% sequentially driven by end-demand from AI natives, enterprises, and sovereign customers, as well as hyperscalers utilizing AI clouds. Shipments of Data Center Hopper products to China during the second quarter of fiscal year 2027 were less than 1% of Data Center revenue.",
+        "source_word_count": 255,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "msft-10q-excerpt",
+      "ticker": "MSFT",
+      "form": "10-Q",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "cbdd475a72edd8f70ebcc640b35f0077c8b5c963e6f79216775973af920e39b9",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Results of Operations Revenue increased $14.6 billion or 19% driven by growth in Agents and Infra. Devices and Consumer revenue decreased driven by Windows OEM and devices, offset in part by growth in Search and advertising.",
+        "source_word_count": 96,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "googl-10q-excerpt",
+      "ticker": "GOOGL",
+      "form": "10-Q",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "3a6033df9b4cdc655205f5ac2cb4ab66659f9ab88dcddc4a84c41527d1c9a05f",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Results of Operations Google Search & other revenues increased $6.8 billion and $25.6 billion from the three and nine months ended September 30, 2025 to the three and nine months ended September 30, 2026.",
+        "source_word_count": 124,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "amzn-10q-excerpt",
+      "ticker": "AMZN",
+      "form": "10-Q",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "fc34bff728b6b3bac362529fb904ae5a122c8f800e82f6c563d46444e54ed81c",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Results of Operations Operating income increased from $17.4 billion in Q3 2025 to $28.1 billion in Q3 2026, and increased from $55.0 billion for the nine months ended September 30, 2025 to $79.4 billion for the nine months ended September 30, 2026. We believe that operating income is a more meaningful measure than gross profit and gross margin due to the diversity of our product categories and services.",
+        "source_word_count": 158,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "aapl-10q-excerpt",
+      "ticker": "AAPL",
+      "form": "10-Q",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "d70bdb356aa97adf8b58579b41dcd64e836f1926d7d60d7c34166c38fa9e978b",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Results of Operations Americas net sales increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily due to higher net sales of iPhone, Services and Mac.",
+        "source_word_count": 87,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "8k-agreement",
+      "ticker": "SYNTHETIC",
+      "form": "8-K",
+      "kind": "synthetic",
+      "input_sha256": "6201a080c6c18ed0e79c486a5474e06b419cef82e9ec5695d8be3ea549de5606",
+      "prediction": {
+        "event_type": "material agreement",
+        "summary": "Example Corporation signed a five-year supply agreement with Example Manufacturing on October 1, 2026.",
+        "source_word_count": 30,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "8k-leadership",
+      "ticker": "SYNTHETIC",
+      "form": "8-K",
+      "kind": "synthetic",
+      "input_sha256": "a7972f81c2e9de6a8f130bf8b5b7019fc2d5c655cf3939760f3a82390c93a2fb",
+      "prediction": {
+        "event_type": "leadership",
+        "summary": "Example Corporation appointed Morgan Lee as chief financial officer effective November 1, 2026.",
+        "source_word_count": 26,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "empty-filing",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "kind": "synthetic",
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "prediction": {
+        "event_type": "unknown",
+        "summary": "The filing contained no readable text.",
+        "source_word_count": 0,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "10q-table-only",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "kind": "synthetic",
+      "input_sha256": "21a9030dbd419d74ec97ea182d15df12c934167a2083f90338e049c7bebf3db6",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "No suitable financial-result sentences were found in the filing.",
+        "source_word_count": 29,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "10q-boundary",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "kind": "synthetic",
+      "input_sha256": "502b83291737b29bb78a10d12b092c33676a8d079d8d21dc295c615c117134a8",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Revenue increased 12% to $120 million during the quarter because more customers purchased our services.",
+        "source_word_count": 54,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "10q-heading-missing",
+      "ticker": "SYNTHETIC",
+      "form": "10-Q",
+      "kind": "synthetic",
+      "input_sha256": "702e1e75c5f09f13eba0102896c945f54c795e053f54976161ea8618eea90056",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Revenue increased 15% to $230 million during the quarter as demand increased across our customer base.",
+        "source_word_count": 16,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "10k-current-fallback",
+      "ticker": "SYNTHETIC",
+      "form": "10-K",
+      "kind": "synthetic",
+      "input_sha256": "466b7f906ae4c726ba7f2a486ae5efd63b11c84c1df2b5ea59e6da0981e6c5c8",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "Management Discussion Net sales increased 10% to $550 million during the fiscal year as customers purchased additional products.",
+        "source_word_count": 20,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": true,
+        "required_evidence_present": true,
+        "forbidden_evidence_absent": true
+      },
+      "passed": true
+    },
+    {
+      "id": "amzn-8k-2026-10-29",
+      "ticker": "AMZN",
+      "form": "8-K",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "302b26b881190636b40275d4d2435da08b1d6bcd2b92ccb61dfb2d05c0ce20fa",
+      "prediction": {
+        "event_type": "earnings/results",
+        "summary": "No suitable summary was found for this filing.",
+        "source_word_count": 99,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": false,
+        "required_evidence_present": false,
+        "forbidden_evidence_absent": true
+      },
+      "passed": false
+    },
+    {
+      "id": "amzn-8k-2026-09-14",
+      "ticker": "AMZN",
+      "form": "8-K",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "adb449376d4da457ba62355a4fd733a099272500da11089de6fd16f5803517c7",
+      "prediction": {
+        "event_type": "other event",
+        "summary": "No suitable summary was found for this filing.",
+        "source_word_count": 381,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": false,
+        "required_evidence_present": false,
+        "forbidden_evidence_absent": true
+      },
+      "passed": false
+    },
+    {
+      "id": "amzn-8k-2026-09-09",
+      "ticker": "AMZN",
+      "form": "8-K",
+      "kind": "adapted_cached_excerpt",
+      "input_sha256": "5b3c1bbfce57c65a800d724ad795e72696e24c9e09b4f5e75dc0205650be7232",
+      "prediction": {
+        "event_type": "leadership",
+        "summary": "No suitable summary was found for this filing.",
+        "source_word_count": 338,
+        "summary_method": "rule-based form-aware extractive"
+      },
+      "checks": {
+        "event_type_correct": true,
+        "fallback_correct": false,
+        "required_evidence_present": false,
+        "forbidden_evidence_absent": true
+      },
+      "passed": false
+    }
+  ],
+  "schema_version": 1,
+  "generated_at": "2026-11-08T15:20:31.529703+00:00",
+  "source_revision": "b873d8747a26e69a1358493f5667955d14e2ac89",
+  "code_sha256": {
+    "src/summarizer.py": "97fd2b403830289bdfa3d1a2091e32d206e2c28057a3fa113ea5769747bccf7f",
+    "evals/run.py": "0c8c5bbb037f93c519a25bfc252dcf7cbd21f5c0b4358006c8bbae755490b8ee",
+    "scripts/environment.py": "3bf8a7680630fd9ca926fb862fa645964aac172be11d946b077321f9b7e2d08d"
+  },
+  "suite_sha256": "f70f8f600b3048391f34033b29228a5e648180a85157f73aa3305bb3564b65b0",
+  "environment": {
+    "python": "3.14.5",
+    "implementation": "CPython",
+    "system": "Windows",
+    "machine": "AMD64",
+    "packages": {
+      "altair": "6.3.0",
+      "anyio": "4.16.0",
+      "attrs": "26.1.0",
+      "beautifulsoup4": "4.15.0",
+      "certifi": "2026.10.23",
+      "charset-normalizer": "3.5.2",
+      "click": "8.5.1",
+      "h11": "0.16.0",
+      "idna": "3.20",
+      "itsdangerous": "2.2.0",
+      "jinja2": "3.1.6",
+      "jsonschema": "4.26.0",
+      "jsonschema-specifications": "2025.9.1",
+      "lxml": "6.1.3",
+      "markupsafe": "3.0.4",
+      "narwhals": "2.28.0",
+      "numpy": "2.5.4",
+      "packaging": "26.3",
+      "pandas": "3.1.1",
+      "pillow": "13.0.0",
+      "protobuf": "7.36.2",
+      "pyarrow": "26.0.1",
+      "pydeck": "0.9.3",
+      "python-dateutil": "4.0.0",
+      "python-multipart": "0.0.33",
+      "referencing": "0.37.0",
+      "requests": "2.34.2",
+      "rpds-py": "2026.9.1",
+      "soupsieve": "4.0.1",
+      "starlette": "1.10.0",
+      "streamlit": "1.67.0",
+      "typing-extensions": "4.16.0",
+      "tzdata": "2026.6",
+      "urllib3": "2.8.0",
+      "uvicorn": "0.54.0",
+      "watchdog": "7.1.0",
+      "websockets": "17.4"
+    },
+    "requirements_sha256": "6317d915f087eb3bce30fd00bdc4ab590355b805bba711f84d6f4631f9c022ed"
+  },
+  "run_id": "b1b197852eba5ac7a918538a4de4300cefc8bbdb3c8f81d35d0a596125a03fec"
+}
