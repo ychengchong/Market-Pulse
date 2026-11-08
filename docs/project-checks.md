@@ -12,8 +12,17 @@ python -c "import requests, bs4, lxml, streamlit; import main, process_filings, 
 ```
 
 Do not import `dashboard.py` as a library: it executes the Streamlit page.
-There is no committed test suite. A zero-test discovery run is not evidence of
-application correctness.
+Run the committed offline ingestion regression suite with application dependencies
+installed:
+
+```powershell
+python -B -m unittest discover -s tests -v
+```
+
+Tests mock SEC transport and use isolated files under ignored `data/.test-runs/`.
+They cover retries, access denial, response validation, checkpoint preservation,
+real HTML parsing and Streamlit behaviour through its AppTest API. They do not
+measure summary quality or establish continuing live SEC availability.
 
 ## Functional verification when changing pipeline behaviour
 
@@ -64,6 +73,7 @@ Do not treat deterministic execution as evidence of factual completeness.
 The environment has no dependency lockfile. Before claiming reproducibility,
 choose a supported Python version, resolve and lock dependencies in a clean
 environment, and verify installation and the offline pipeline there. Live SEC
-access and full dashboard behaviour require separate verification. JSON writes
-are not atomic, cached HTML lacks input/version validation, and failed records
-are omitted from summary output; tests should account for these current limits.
+availability requires separate verification. Checkpoint writes are atomic, but
+checkpoint and run-report publication are separate operations. HTML cache identity
+is still accession-based; concurrent runs and crash recovery across multiple
+stages are not transactional.

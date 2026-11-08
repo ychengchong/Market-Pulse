@@ -36,8 +36,8 @@ the watchlist, accepted forms (`8-K`, `10-Q`, `10-K`), and per-company limit.
 
 ```powershell
 python main.py
-python process_filings.py
-python summarize_filings.py
+if ($LASTEXITCODE -eq 0) { python process_filings.py }
+if ($LASTEXITCODE -eq 0) { python summarize_filings.py }
 python -m streamlit run dashboard.py
 ```
 
@@ -48,11 +48,28 @@ python -m streamlit run dashboard.py
 | `summarize_filings.py` | Summarise successfully processed filings | `data/summaries.json` |
 | `dashboard.py` | Filter summaries by company and form and link to SEC sources | Local Streamlit dashboard |
 
+The commands above use PowerShell; stop on any failure when running stages
+manually on other shells. A failed stage returns a nonzero exit code. The
+dashboard may still be opened to inspect previous results and failure details.
+
 The first two steps require network access for fresh data. Processing reuses
 nonempty HTML files by accession number. Saved data is generated locally and
 ignored by Git. To reopen existing results, run only the dashboard command.
 Counts depend on available filings and processing failures; 25 is a configured
 maximum for the default watchlist, not a guaranteed result.
+
+Each stage replaces its main JSON output only after a complete nonempty successful
+batch. On failures, partial batches or empty results, it preserves the previous
+checkpoint and writes a status report (`data/metadata_status.json`,
+`data/processing_status.json`, or `data/summaries_status.json`). The dashboard shows
+run timestamps, warnings and per-company/per-filing errors. Partial successes are
+recorded in reports; they are not mixed into older published checkpoints.
+
+Requests use bounded retries for temporary failures. A 403 stops further network
+requests in that stage and reports an access denial; repeated retries or changing
+identities are not a remedy. Check the contact header and network access, wait
+if access is rate-limited, and follow the [SEC access guidance](https://www.sec.gov/search-filings/edgar-search-assistance/accessing-edgar-data).
+Cached HTML remains available, and invalid cached block pages are refetched.
 
 ## Repository
 
@@ -65,6 +82,7 @@ summarize_filings.py   Summary generation entry point
 dashboard.py           Streamlit entry point
 src/                   Shared SEC, download, parsing, storage and summary code
 docs/                  Project brief, architecture and verification guidance
+tests/                 Offline ingestion and dashboard regression tests
 ```
 
 The entry points serve different pipeline stages; reusable code lives in `src/`.
@@ -80,8 +98,14 @@ Check Python syntax without importing optional dependencies or creating caches:
 python -c "import ast; from pathlib import Path; files = sorted(Path('.').glob('*.py')) + sorted(Path('src').glob('*.py')); [ast.parse(p.read_text(encoding='utf-8'), filename=str(p)) for p in files]; print(f'Parsed {len(files)} Python files')"
 ```
 
-There is currently no committed automated test suite or dependency lockfile.
-Syntax checks do not verify SEC connectivity, parser behaviour, or dashboard
-rendering. The form-aware summariser targets `8-K` and `10-Q`; `10-K` uses the
+Run offline regression checks after installing the application dependencies:
+
+```powershell
+python -B -m unittest discover -s tests -v
+```
+
+The suite uses mocked network responses, real HTML parsing, and Streamlit AppTest.
+No dependency lockfile exists yet. Offline checks do not verify current SEC
+connectivity or browser appearance. The form-aware summariser targets `8-K` and `10-Q`; `10-K` uses the
 `10-Q` rules as a fallback. Highlight quality has not been evaluated against
 human-reviewed references.
