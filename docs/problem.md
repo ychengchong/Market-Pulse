@@ -17,7 +17,8 @@ three-company example in the supplied proposal does not replace it.
 
 Implemented: metadata collection, filing HTML downloads, text extraction,
 deterministic rule-based highlights, JSON checkpoints and a Streamlit filing
-browser. PostgreSQL analytics, XBRL fact ingestion, embeddings, retrieval,
+browser, plus source-linked XBRL financial-fact ingestion and offline replay.
+PostgreSQL analytics, embeddings, retrieval,
 LLM answers and query routing are not implemented yet. Current extractive
 highlights remain the baseline for future comparisons.
 
@@ -50,7 +51,13 @@ message and collapsible update details with Singapore timestamps. Failure and
 staleness warnings remain visible.
 See [evaluation scope](../evals/README.md) and [results](../reports/README.md).
 
-Next in the agreed sequence: structured XBRL ingestion, then PostgreSQL analytics
+Upgrade 3 adds the structured XBRL path with immutable snapshots, explicit period
+and unit contracts, candidate/revision provenance, coverage flags and offline
+replay. See [financial-fact ingestion](financial-facts.md) for its initial metric
+mapping and bounds. Fiscal-period derivation and accounting-value review remain
+explicit follow-ups; duration buckets do not prove fiscal labels.
+
+Next in the agreed sequence: PostgreSQL persistence, then financial analytics
 before adding an LLM.
 
 The supplied development-duration estimates are planning suggestions, not
@@ -60,9 +67,9 @@ committed delivery dates. No paid provider or external deployment is selected.
 
 This table is the current implementation roadmap. Keep the original upgrade
 numbers and branch names; exhibit ingestion is an additional prerequisite before
-upgrade 6. Upgrade 1 is implemented and merged. Upgrade 2 and the filing-browser
-layout improvements are implemented locally on its branch and are not yet
-committed or pushed. The remaining rows describe planned capabilities.
+upgrade 6. Upgrades 1 and 2 are implemented and merged into main. Upgrade 3 is
+implemented locally on its branch and is not yet committed or pushed. The
+remaining rows describe planned capabilities.
 
 Main goal: **AI-Powered Financial Analytics & Research Platform**.
 Integration branch name, if used: `feat/financial-research-platform`; this document
@@ -71,8 +78,8 @@ does not claim that branch has been created.
 | Order | Upgrade and scope | Branch | State |
 |---|---|---|---|
 | 1 | Reliable SEC ingestion: bounded retries, response/cache validation, atomic checkpoints, preserved outputs on failure, per-item reports and freshness warnings. | `fix/sec-ingestion-reliability` | Implemented and merged |
-| 2 | Reproducibility and baseline: pinned/hash-locked environment, clean-install verification, versioned inputs/references/results, MD&A and 8-K TOC fixes. Includes the requested grouped 8-K display improvement. | `chore/reproducibility-and-baseline` | Implemented locally; human reference review pending |
-| 3 | Structured XBRL ingestion: financial facts with source/unit/period provenance; tag mappings, fiscal calendars, amendments and quarter/YTD validation. Define the historical coverage needed for useful annual/quarterly analysis. | `feat/xbrl-ingestion` | Planned; next numbered upgrade |
+| 2 | Reproducibility and baseline: pinned/hash-locked environment, clean-install verification, versioned inputs/references/results, MD&A and 8-K TOC fixes. Includes the requested grouped 8-K display improvement. | `chore/reproducibility-and-baseline` | Implemented and merged; human reference review pending |
+| 3 | Structured XBRL ingestion: financial facts with source/unit/period provenance; tag mappings, fiscal calendars, amendments and quarter/YTD validation. Independent configurable history window; duration labels preserve exact boundaries without inferring fiscal quarter numbers. | `feat/xbrl-ingestion` | Implemented locally; source-value review pending |
 | 4 | PostgreSQL storage: companies, filings, selected facts and processing status; source-file identities, relationships, migrations and duplicate-safe loads. | `feat/postgres-storage` | Planned |
 | 5 | Financial analytics: controlled SQL/Python KPIs, trends, comparable periods, missing-data handling and company comparisons in Streamlit. | `feat/financial-analytics` | Planned |
 | 5a | Exhibit ingestion: discover relevant filing attachments, download/validate/extract them, and retain parent-filing and exhibit source links. Include earnings-release exhibits such as 99.1; do not fetch every attachment blindly. | `feat/exhibit-ingestion` | Planned; separate enhancement before 6 |
@@ -80,14 +87,14 @@ does not claim that branch has been created.
 | 7 | Filing retrieval: section-aware source-linked chunks, embeddings and one chosen vector store (pgvector or Chroma); evaluate retrieval separately. | `feat/filing-retrieval` | Planned |
 | 8 | Cited research assistant: narrative financial Q&A from retrieved evidence with citations, missing-evidence handling and abstention. | `feat/cited-research-assistant` | Planned |
 | 9 | Query routing: numerical questions to approved analytics functions, narrative questions to retrieval, mixed questions to both; compose calculations and evidence-backed explanations. | `feat/query-routing` | Planned |
-| 10 | Complete application: Dashboard, Ask AI and Company comparison tabs, FastAPI service boundary, Docker startup/persistence, failure/recovery checks and end-to-end evaluation. | `feat/platform-packaging` | Planned |
+| 10 | Complete application: Dashboard, Ask AI and Company comparison tabs, FastAPI service boundary, Docker startup/persistence, failure/recovery checks, free public portfolio demo and monthly refresh workflow. | `feat/platform-packaging` | Planned |
 
 The watchlist remains Nvidia, Microsoft, Alphabet, Amazon and Apple, with its
 actual identifiers and settings maintained only in `config.py`. The current
 five-filings-per-company selection is across all enabled forms; it does not
-ensure annual/quarterly coverage for every company. Choose explicit historical
-and form coverage during upgrade 3 rather than treating the current sample as a
-complete financial history.
+ensure annual/quarterly coverage for every company. The separate XBRL path now has an explicit history window for 10-K/10-Q source
+facts and amendments. It does not backfill narrative report documents or make the
+current narrative sample a complete financial history.
 
 Upgrade 2's evaluation set is development data. Before claiming LLM improvement,
 obtain human review and introduce separate confirmation cases. A passing small
@@ -100,6 +107,20 @@ open; this plan does not authorise paid runs or external deployment.
 
 ## Recorded follow-up gaps
 
+- **Portfolio demo (upgrade 10):** prepare a free public deployment, initially
+  targeting Streamlit Community Cloud, with a clickable Live Demo link in README,
+  screenshots and a short visitor-facing wake-up note. Visitors should not need
+  local installation or the developer's laptop to remain running. Free-tier
+  availability and inactivity policies must be rechecked at deployment; do not
+  promise perpetual free service or uninterrupted uptime.
+- **Monthly updates (upgrade 10):** schedule ingestion independently of browser
+  visits, publish only validated successful refreshes and display data freshness.
+  Preserve a usable saved-data demo when refreshes fail. Choose durable storage
+  and verify scheduling/inactivity behaviour rather than relying on the app's
+  local disk or keeping it awake. Adapt the Windows-specific dependency lock to
+  the deployment target. Keep hosting free for the initial portfolio demo and
+  control or disable paid AI features; deploying or enabling paid services needs
+  a separate user instruction at that time.
 - **Exhibit ingestion:** the downloader currently retrieves only each filing's
   primary document. Apple earnings 8-Ks can therefore yield an announcement rather
   than financial results because the earnings release is in Exhibit 99.1. Add

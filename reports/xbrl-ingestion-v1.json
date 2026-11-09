@@ -1,0 +1,455 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-11-09",
+  "branch": "feat/xbrl-ingestion",
+  "source_revision": "0a96013cce50b3de06e765fbe41199d590f0e635",
+  "pipeline_identity": {
+    "python": "3.14.5",
+    "requests": "2.34.2",
+    "code_sha256": {
+      "ingest_financials.py": "f88adb41c8ede8b748ab3cef23612e0016234067ab102fbbb93e56828eabe7f5",
+      "src/xbrl.py": "d25f27218506a88fe7390598440347c653795fed51f239947f07602b4ba8c871",
+      "src/sec_http.py": "1448ffc76fdaf36d30e466d1de704ab93b9c300f791d829cdd51669c572b298c",
+      "src/storage.py": "6b01bc6db106a63c774318c791ac3110a1ccecf8847745211a06d63339dad8fb"
+    },
+    "requirements_sha256": "6317d915f087eb3bce30fd00bdc4ab590355b805bba711f84d6f4631f9c022ed"
+  },
+  "window": {
+    "start_date": "2021-01-01",
+    "as_of": "2026-11-09",
+    "period_filter": "end_date"
+  },
+  "evidence": {
+    "live_companyfacts_requests_succeeded": 5,
+    "offline_replay_no_network": true,
+    "offline_replay_byte_identical": true,
+    "source_snapshots_checksums_verified": true,
+    "full_regression_tests_passed": 82,
+    "summary_baseline_cases_reproduced": 15,
+    "dependency_check": "passed"
+  },
+  "normalised_dataset_sha256": "0e203a4a192049235e795f1346d77e14ac31c629c807195e4f3d99388bfc7de2",
+  "companies": [
+    {
+      "company": "Nvidia",
+      "ticker": "NVDA",
+      "cik": "0001045810",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+      "snapshot_sha256": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
+      "source_retrieved_at": "2026-11-08T16:14:06.020297+00:00",
+      "candidate_count": 402,
+      "observation_statuses": {
+        "selected": 205
+      },
+      "coverage": {
+        "revenue": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 6,
+            "nine_month_duration": 5
+          }
+        },
+        "net_income": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 6,
+            "nine_month_duration": 5
+          }
+        },
+        "gross_profit": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 6,
+            "nine_month_duration": 5
+          }
+        },
+        "operating_income": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 6,
+            "nine_month_duration": 5
+          }
+        },
+        "assets": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "liabilities": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "operating_cash_flow": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 6,
+            "quarter_duration": 6,
+            "six_month_duration": 6,
+            "nine_month_duration": 5
+          }
+        }
+      }
+    },
+    {
+      "company": "Microsoft",
+      "ticker": "MSFT",
+      "cik": "0000789019",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+      "snapshot_sha256": "8c1903c041f5c27e86ed15f37debb1f41882b7904bba129ef9edc76478b1e8ea",
+      "source_retrieved_at": "2026-11-08T16:14:06.020297+00:00",
+      "candidate_count": 418,
+      "observation_statuses": {
+        "selected": 216
+      },
+      "coverage": {
+        "revenue": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 5
+          }
+        },
+        "net_income": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 5
+          }
+        },
+        "gross_profit": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 5
+          }
+        },
+        "operating_income": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 5
+          }
+        },
+        "assets": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "liabilities": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "operating_cash_flow": {
+          "status": "available",
+          "selected_periods": 34,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17,
+            "six_month_duration": 5
+          }
+        }
+      }
+    },
+    {
+      "company": "Alphabet",
+      "ticker": "GOOGL",
+      "cik": "0001652044",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "snapshot_sha256": "f87bc183f74b45ecf9a0933e0e0a1b6b97ead51a9d29367a7dae436574e1c1d0",
+      "source_retrieved_at": "2026-11-08T16:14:06.020297+00:00",
+      "candidate_count": 333,
+      "observation_statuses": {
+        "selected": 174
+      },
+      "coverage": {
+        "revenue": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 5
+          }
+        },
+        "net_income": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 5
+          }
+        },
+        "gross_profit": {
+          "status": "missing",
+          "selected_periods": 0,
+          "ambiguous_periods": 0,
+          "period_kinds": {}
+        },
+        "operating_income": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 5
+          }
+        },
+        "assets": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "liabilities": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "operating_cash_flow": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "quarter_duration": 6,
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 5
+          }
+        }
+      }
+    },
+    {
+      "company": "Amazon",
+      "ticker": "AMZN",
+      "cik": "0001018724",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+      "snapshot_sha256": "acddb7c0a6973a1fd08372de3b292298a34eae7f42a7eedc4bdebd3ac659c8fd",
+      "source_retrieved_at": "2026-11-08T16:14:06.020297+00:00",
+      "candidate_count": 379,
+      "observation_statuses": {
+        "selected": 199
+      },
+      "coverage": {
+        "revenue": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 5
+          }
+        },
+        "net_income": {
+          "status": "available",
+          "selected_periods": 53,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 23,
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6
+          }
+        },
+        "gross_profit": {
+          "status": "missing",
+          "selected_periods": 0,
+          "ambiguous_periods": 0,
+          "period_kinds": {}
+        },
+        "operating_income": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 5
+          }
+        },
+        "assets": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "liabilities": {
+          "status": "missing",
+          "selected_periods": 0,
+          "ambiguous_periods": 0,
+          "period_kinds": {}
+        },
+        "operating_cash_flow": {
+          "status": "available",
+          "selected_periods": 53,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "year_duration": 23,
+            "quarter_duration": 18,
+            "six_month_duration": 6,
+            "nine_month_duration": 6
+          }
+        }
+      }
+    },
+    {
+      "company": "Apple",
+      "ticker": "AAPL",
+      "cik": "0000320193",
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+      "snapshot_sha256": "f085735b4d08fb116ade18d24247ffabe11df8eb52eae6556b165831f15ef1ad",
+      "source_retrieved_at": "2026-11-08T16:14:06.020297+00:00",
+      "candidate_count": 404,
+      "observation_statuses": {
+        "selected": 209
+      },
+      "coverage": {
+        "revenue": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17
+          }
+        },
+        "net_income": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17
+          }
+        },
+        "gross_profit": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17
+          }
+        },
+        "operating_income": {
+          "status": "available",
+          "selected_periods": 35,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 17
+          }
+        },
+        "assets": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "liabilities": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "instant": 23
+          }
+        },
+        "operating_cash_flow": {
+          "status": "available",
+          "selected_periods": 23,
+          "ambiguous_periods": 0,
+          "period_kinds": {
+            "six_month_duration": 6,
+            "nine_month_duration": 6,
+            "year_duration": 6,
+            "quarter_duration": 5
+          }
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic financial regression fixtures; no independent human accounting review.",
+    "Live evidence establishes schema and mapped-tag coverage, not correctness of every source figure.",
+    "USD entity-wide standard US-GAAP tags only; no custom/segment facts or currency conversion.",
+    "Day-count duration buckets are not fiscal-quarter labels; twelve months can be trailing data.",
+    "Missing source metrics and same-date conflicts are not filled or resolved by inference.",
+    "No quarter/Q4 derivation, ratios, PostgreSQL storage or financial charts in this branch."
+  ]
+}
