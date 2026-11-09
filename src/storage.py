@@ -6,23 +6,27 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-def atomic_write_text(file_path, text):
+def atomic_write_bytes(file_path, content):
     path = Path(file_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(
-            mode="w", encoding="utf-8", dir=path.parent,
+            mode="wb", dir=path.parent,
             prefix=f".{path.name}.", suffix=".tmp", delete=False
         ) as handle:
             temporary = Path(handle.name)
-            handle.write(text)
+            handle.write(content)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary, path)
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)
+
+
+def atomic_write_text(file_path, text):
+    atomic_write_bytes(file_path, text.encode("utf-8"))
 
 
 def save_filings_to_json(filings, file_path="data/filings.json"):

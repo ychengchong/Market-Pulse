@@ -68,10 +68,24 @@ source-linked attachment ingestion are a recorded follow-up in the project brief
 - The dashboard is local. Authentication, tenant isolation, production readiness
   gates, deployment automation and release manifests are not implemented.
 
+## Implemented structured-data path
+
+`ingest_financials.py` orchestrates `src/xbrl.py` and the shared SEC request/storage
+helpers. Companyfacts responses are retained as immutable byte snapshots, then
+normalised into source-linked candidates and exact-period observations in
+`data/financial_facts.json`. The stage report is `data/financials_status.json`.
+Snapshot identities, code identities, metric/tag selection, duration buckets,
+coverage and publication rules are defined in [financial-facts.md](financial-facts.md).
+They are the contract for the next PostgreSQL consumer. The narrative pipeline
+and its five-filing limit remain separate. No database, financial charts or
+quarterly cash-flow derivation is implemented yet.
+
 ## Target architecture (planned)
 
 The delivery order and acceptance evidence live in [the project brief](problem.md).
-The following components describe the target; they are not currently running.
+The following diagram describes the complete target. Structured-fact ingestion
+and the narrative filing browser exist; PostgreSQL, analytics and AI paths remain
+planned as identified in the project brief.
 
 ```mermaid
 flowchart TD

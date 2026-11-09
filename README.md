@@ -83,6 +83,27 @@ identities are not a remedy. Check the contact header and network access, wait
 if access is rate-limited, and follow the [SEC access guidance](https://www.sec.gov/search-filings/edgar-search-assistance/accessing-edgar-data).
 Cached HTML remains available, and invalid cached block pages are refetched.
 
+## Structured financial facts
+
+Collect XBRL financial facts independently of the filing summaries:
+
+```powershell
+python ingest_financials.py --start-date 2021-01-01 --as-of 2026-11-09
+```
+
+Replay the saved snapshots without accessing the SEC:
+
+```powershell
+python ingest_financials.py --offline --start-date 2021-01-01 --as-of 2026-11-09
+```
+
+The stage saves immutable raw snapshots, validated observations and per-metric
+coverage to ignored `data/` files. Its history window is independent of the five
+recent narrative filings per company. Missing/conflicting values are flagged;
+exact dates keep instant, quarterly-length and cumulative facts distinct. No
+financial charts or database are added in this step. See
+[financial-fact contracts and limitations](docs/financial-facts.md).
+
 ## Repository
 
 ```text
@@ -92,6 +113,7 @@ main.py                Metadata collection entry point
 process_filings.py     Download and text extraction entry point
 summarize_filings.py   Summary generation entry point
 dashboard.py           Streamlit entry point
+ingest_financials.py    Structured XBRL ingestion and offline replay
 src/                   Shared SEC, download, parsing, storage and summary code
 docs/                  Project brief, architecture and verification guidance
 tests/                 Ingestion, dashboard and baseline integrity tests

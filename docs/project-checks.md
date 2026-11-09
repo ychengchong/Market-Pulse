@@ -34,6 +34,20 @@ records; source links and summary fields preserved across JSON stages; and
 empty-text and missing-file handling. Run the dashboard against the resulting
 summaries and inspect its company/form filters.
 
+## Structured-financial ingestion checks
+
+`tests/test_xbrl.py` uses the invented companyfacts fixture under `tests/fixtures/`
+to verify source identity, precision, date/unit validation, revision conflicts,
+missing metrics, quarter/cumulative separation, fiscal/TTM labelling limits,
+raw snapshot integrity, deterministic replay and checkpoint preservation.
+The shared storage change is also covered by the original ingestion tests.
+
+For bounded live schema validation and a no-network replay, use the commands in
+[financial-facts.md](financial-facts.md). Keep actual raw snapshots and outputs
+ignored; retain small verification records in reports. The report does not claim
+independent accounting review or a human-reviewed financial benchmark. Do not
+call missing source tags zero or derive fiscal labels from filing FY/FP fields.
+
 ## Planned financial analytics gates
 
 These gates apply when the corresponding milestone is implemented; they are
