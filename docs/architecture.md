@@ -94,6 +94,18 @@ verifies/saves private local settings, and `refresh_data.py` checks/migrates,
 ingests, validates and imports financial data. See [analytics](analytics.md) for
 failure boundaries, date alignment and refresh behaviour.
 
+## Frozen portfolio entry point
+
+`src/app.py` owns the shared page; root `dashboard.py` supplies local SQL mode.
+`export_demo.py` reads a consistent current SQL snapshot and saved filing summaries,
+allowlists public fields, validates them and atomically publishes `demo/snapshot.json`.
+`src/demo.py` verifies and decodes exact date/Decimal inputs for `demo/dashboard.py`.
+The demo never reads database settings or falls back to local pipeline files and
+has no database-driver dependency. The calculation functions are shared between
+both modes, with imports for SQL deferred until an actual SQL read.
+See [deployment and manual updates](../demo/README.md). This implements frozen-data
+packaging; public hosting is not yet deployed and monthly scheduling remains deferred.
+
 ## Target architecture (planned)
 
 The delivery order and acceptance evidence live in [the project brief](problem.md).

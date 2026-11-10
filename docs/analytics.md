@@ -96,4 +96,5 @@ and database-failure isolation. See [project checks](project-checks.md) and the
 The dashboard was also opened against the isolated database using the cached
 five-company dataset. This verifies integration and rendering; it is not an
 independent accounting audit or human-reviewed financial benchmark. Portfolio
-hosting and monthly scheduling remain future scope; AI upgrades are deferred.
+hosting is prepared through the [frozen portfolio entry point](../demo/README.md),
+but deployment has not yet been performed. Monthly scheduling and AI upgrades remain deferred.

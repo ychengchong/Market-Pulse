@@ -121,6 +121,10 @@ open; this plan does not authorise paid runs or external deployment.
   local installation or the developer's laptop to remain running. Free-tier
   availability and inactivity policies must be rechecked at deployment; do not
   promise perpetual free service or uninterrupted uptime.
+  Frozen-data packaging is now implemented locally on `feat/portfolio-demo`:
+  an allowlisted public snapshot, standalone entry point and Linux dependency lock.
+  See [deployment steps](../demo/README.md). Public deployment and the observed
+  README Live Demo link remain pending; no monthly updates are needed for this mode.
 - **Monthly updates (upgrade 10):** schedule ingestion independently of browser
   visits, publish only validated successful refreshes and display data freshness.
   Preserve a usable saved-data demo when refreshes fail. Choose durable storage

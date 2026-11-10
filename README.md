@@ -39,6 +39,18 @@ the watchlist, accepted forms (`8-K`, `10-Q`, `10-K`), and per-company limit.
 
 ## Run
 
+For the **frozen portfolio demo**, no PostgreSQL or credentials are needed:
+
+```powershell
+python -m streamlit run demo/dashboard.py
+```
+
+This reads the committed public snapshot (5 companies, financial observations and
+filing highlights), shows its source dates, and never refreshes data automatically.
+See [exact deployment steps](demo/README.md). Cloud entry point:
+**`demo/dashboard.py`**, with its own Linux dependency lock in `demo/requirements.txt`.
+Your existing root `dashboard.py` remains the local PostgreSQL version.
+
 With PostgreSQL running and your dedicated database already created, configure
 the connection once. The defaults are database `Market Pulse`, user `postgres`,
 host `localhost`, port `5432`; command options support other values.
