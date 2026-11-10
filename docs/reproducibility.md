@@ -4,8 +4,8 @@
 
 The verified target is **CPython 3.14.5 on Windows AMD64**, with pip 26.1.1.
 `.python-version` records the interpreter version. `requirements.in` is the
-editable list of four direct runtime dependencies; `requirements.txt` is the
-complete generated artifact lock, including 37 direct/transitive packages and
+editable list of five direct runtime dependencies; `requirements.txt` is the
+complete generated artifact lock, including 39 direct/transitive packages and
 one SHA-256 hash per resolved wheel. The lock contains no credentials or local
 paths. `scripts/environment.py` checks the target, installed versions and whether
 the input manifest still matches the lock.
@@ -30,7 +30,7 @@ python -m pip install --require-hashes -r requirements.txt
 python -m pip check
 python -m scripts.environment
 python -B -m unittest discover -s tests -v
-python -m evals.run --verify reports/rule-based-baseline-v2.json
+python -m evals.run --verify reports/rule-based-baseline-v3.json
 ```
 
 The environment check refuses a different patch version or mismatched package

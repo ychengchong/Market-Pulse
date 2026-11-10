@@ -104,6 +104,23 @@ exact dates keep instant, quarterly-length and cumulative facts distinct. No
 financial charts or database are added in this step. See
 [financial-fact contracts and limitations](docs/financial-facts.md).
 
+## PostgreSQL storage
+
+Validated financial facts can now be loaded into a dedicated PostgreSQL database:
+
+```powershell
+# Set DATABASE_URL locally using your own database credentials first.
+python database.py migrate
+python database.py import
+python database.py status
+```
+
+Imports verify the raw snapshots, preserve candidates and source links, and load
+all companies in one transaction. Repeating an import does not duplicate business
+records. Database setup, the managed-Windows driver fallback, tests and backup
+examples are in [the database guide](docs/database.md). The current filing browser
+still reads its saved JSON summaries; financial charts follow in upgrade 5.
+
 ## Repository
 
 ```text
@@ -114,6 +131,8 @@ process_filings.py     Download and text extraction entry point
 summarize_filings.py   Summary generation entry point
 dashboard.py           Streamlit entry point
 ingest_financials.py    Structured XBRL ingestion and offline replay
+database.py            PostgreSQL migration, import and status commands
+migrations/            Checksum-tracked PostgreSQL schema changes
 src/                   Shared SEC, download, parsing, storage and summary code
 docs/                  Project brief, architecture and verification guidance
 tests/                 Ingestion, dashboard and baseline integrity tests
@@ -147,7 +166,7 @@ The suite uses mocked network responses, real HTML parsing, and Streamlit AppTes
 Reproduce the saved development baseline:
 
 ```powershell
-python -m evals.run --verify reports/rule-based-baseline-v2.json
+python -m evals.run --verify reports/rule-based-baseline-v3.json
 ```
 
 The [evaluation suite](evals/README.md) has 15 frozen development cases with

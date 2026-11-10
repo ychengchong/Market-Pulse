@@ -1,10 +1,10 @@
 # Rule-based development baselines
 
-The current reference is [rule-based-baseline-v2.json](rule-based-baseline-v2.json),
+The current reference is [rule-based-baseline-v3.json](rule-based-baseline-v3.json),
 using the expanded 15-case suite. Reproduce it in the locked environment:
 
 ```powershell
-python -m evals.run --verify reports/rule-based-baseline-v2.json
+python -m evals.run --verify reports/rule-based-baseline-v3.json
 ```
 
 Preserved history:
@@ -14,7 +14,8 @@ Preserved history:
 | [rule-based-before.json](rule-based-before.json) | v1, 12 cases | Branch-1 summariser before MD&A correction |
 | [rule-based-baseline.json](rule-based-baseline.json) | v1, 12 cases | After Nvidia MD&A correction, before the 8-K TOC correction |
 | [8k-toc-before.json](8k-toc-before.json) | v2, 15 cases | Expanded suite evaluated before changing the 8-K selector |
-| [rule-based-baseline-v2.json](rule-based-baseline-v2.json) | v2, 15 cases | Current implementation after both section-selection fixes |
+| [rule-based-baseline-v2.json](rule-based-baseline-v2.json) | v2, 15 cases | After both section-selection fixes, under the original 37-package lock |
+| [rule-based-baseline-v3.json](rule-based-baseline-v3.json) | v2, 15 cases | Same predictions under the 39-package PostgreSQL-enabled lock |
 
 Compare reports on the same suite and environment; their hashes are recorded.
 Do not compare aggregate percentages across differently sized suites as a quality
@@ -38,3 +39,6 @@ The three observed Amazon 8-K TOC failures are corrected. Short earnings
 announcements still require exhibit ingestion for richer source content; Apple
 10-Q narrative selection remains a separate quality gap. Follow-up ownership and
 scope are recorded in [the project brief](../docs/problem.md#recorded-follow-up-gaps).
+
+Upgrade 4 adds [PostgreSQL verification evidence](postgres-storage-v1.json). The
+new summary report reflects a dependency-identity change, not a quality improvement.

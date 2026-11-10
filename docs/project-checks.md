@@ -48,6 +48,15 @@ ignored; retain small verification records in reports. The report does not claim
 independent accounting review or a human-reviewed financial benchmark. Do not
 call missing source tags zero or derive fiscal labels from filing FY/FP fields.
 
+## PostgreSQL checks
+
+See [database.md](database.md#verification) for the opt-in test connection setting.
+Without it, the test runner reports database integration checks as skipped; unit
+checks alone do not verify transactions or SQL. Use a disposable local database
+for the real migration, duplicate/concurrent import, decimal, rollback and
+source-provenance checks. The selected driver implementation and bounded cached
+five-company import evidence are recorded in the database verification report.
+
 ## Planned financial analytics gates
 
 These gates apply when the corresponding milestone is implemented; they are
@@ -84,7 +93,7 @@ Use the [locked environment](reproducibility.md), then run:
 
 ```powershell
 python -m scripts.environment
-python -m evals.run --verify reports/rule-based-baseline-v2.json
+python -m evals.run --verify reports/rule-based-baseline-v3.json
 ```
 
 The suite, predeclared section-fix criteria, provenance and scoring limitations

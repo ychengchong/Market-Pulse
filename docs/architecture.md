@@ -76,15 +76,25 @@ normalised into source-linked candidates and exact-period observations in
 `data/financial_facts.json`. The stage report is `data/financials_status.json`.
 Snapshot identities, code identities, metric/tag selection, duration buckets,
 coverage and publication rules are defined in [financial-facts.md](financial-facts.md).
-They are the contract for the next PostgreSQL consumer. The narrative pipeline
-and its five-filing limit remain separate. No database, financial charts or
-quarterly cash-flow derivation is implemented yet.
+They are the contract consumed by the PostgreSQL importer. The narrative pipeline
+and its five-filing limit remain separate. Financial charts and quarterly cash-flow
+derivation are not implemented yet.
+
+## Implemented database path
+
+`database.py` uses `src/database.py` and checksum-tracked SQL migrations. It verifies
+the XBRL artifact against its raw snapshots, then stores company/source identities,
+NUMERIC facts, dataset-specific observations and run history in one transaction.
+Current selected values are exposed through SQL views while older datasets remain
+queryable. Schema, ordering, rollback, credentials and recovery contracts live in
+[database.md](database.md). Raw snapshots stay in external files, and the existing
+filing dashboard remains a JSON consumer until upgrade 5.
 
 ## Target architecture (planned)
 
 The delivery order and acceptance evidence live in [the project brief](problem.md).
-The following diagram describes the complete target. Structured-fact ingestion
-and the narrative filing browser exist; PostgreSQL, analytics and AI paths remain
+The following diagram describes the complete target. Structured-fact ingestion,
+PostgreSQL persistence and the narrative filing browser exist; analytics and AI paths remain
 planned as identified in the project brief.
 
 ```mermaid
@@ -103,7 +113,7 @@ flowchart TD
     ANSWER --> UI[Streamlit: Dashboard, Ask AI, Company comparison]
 ```
 
-PostgreSQL is the planned home for structured analytics. The vector-store choice
+PostgreSQL now stores structured facts; analytics calculations remain planned. The vector-store choice
 remains open: pgvector can share PostgreSQL persistence, while Chroma would be
 a separate store. Choose one when implementing retrieval. Provider/model choice,
 embedding model and historical ingestion range are also unconfigured.
