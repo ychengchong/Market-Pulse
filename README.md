@@ -4,11 +4,27 @@ Market Pulse is a local financial dashboard for Nvidia, Microsoft, Alphabet,
 Amazon and Apple. Explore PostgreSQL-backed financial trends, compare company
 results, and browse source-linked SEC filing highlights. No AI API key is required.
 
+**[CHECK OUT THE LIVE DEMO APP HERE](https://dashboardpy-vb47k7ptczxxujve3xrqk3.streamlit.app/)**
+
+## How it looks
+
+**Financial overview** — company KPIs, financial trends, margins and cash flow.
+
+![Market Pulse financial overview with KPI cards and four financial charts](docs/images/financial-overview.png)
+
+**Company comparison** — compare reported financial metrics across the watchlist.
+
+![Market Pulse company comparison with company filters and a revenue chart](docs/images/company-comparison.png)
+
+**Filings** — browse dated filing highlights and open the original SEC disclosures.
+
+![Market Pulse filing highlights with grouped company events and SEC source links](docs/images/filings.png)
+
 The project goal is an integrated **financial analytics and AI research
 platform**: PostgreSQL-backed financial KPIs and company comparisons, plus
 filing-based answers with source citations, in one Streamlit application.
-Financial analytics is implemented through upgrade 5. Retrieval, cited AI answers
-and public hosting remain optional future work. See the
+Financial analytics is implemented through upgrade 5, with a public frozen-data
+demo linked above. Retrieval and cited AI answers remain optional future work. See the
 [project brief and delivery milestones](docs/problem.md) and
 [target architecture](docs/architecture.md#target-architecture-planned). The [ordered upgrade roadmap](docs/problem.md#agreed-upgrade-order)
 records implementation status, branch names and the exhibit-ingestion prerequisite
