@@ -1,15 +1,14 @@
 ﻿# Market Pulse
 
-Market Pulse collects SEC filing metadata for Nvidia, Microsoft, Alphabet, Amazon, and Apple,
-downloads filing HTML, extracts readable text, and creates rule-based highlights
-for a local Streamlit dashboard. No generative AI API key is required.
+Market Pulse is a local financial dashboard for Nvidia, Microsoft, Alphabet,
+Amazon and Apple. Explore PostgreSQL-backed financial trends, compare company
+results, and browse source-linked SEC filing highlights. No AI API key is required.
 
 The project goal is an integrated **financial analytics and AI research
 platform**: PostgreSQL-backed financial KPIs and company comparisons, plus
 filing-based answers with source citations, in one Streamlit application.
-Build financial analytics first, then retrieval and cited answers, then combine
-them through controlled query routing. These capabilities are planned; the
-current implementation is the filing monitor described below. See the
+Financial analytics is implemented through upgrade 5. Retrieval, cited AI answers
+and public hosting remain optional future work. See the
 [project brief and delivery milestones](docs/problem.md) and
 [target architecture](docs/architecture.md#target-architecture-planned). The [ordered upgrade roadmap](docs/problem.md#agreed-upgrade-order)
 records implementation status, branch names and the exhibit-ingestion prerequisite
@@ -40,6 +39,43 @@ the watchlist, accepted forms (`8-K`, `10-Q`, `10-K`), and per-company limit.
 
 ## Run
 
+With PostgreSQL running and your dedicated database already created, configure
+the connection once. The defaults are database `Market Pulse`, user `postgres`,
+host `localhost`, port `5432`; command options support other values.
+
+```powershell
+python configure_database.py
+python refresh_data.py
+python -m streamlit run dashboard.py
+```
+
+Setup verifies the connection and saves it in ignored `.streamlit/secrets.toml`.
+The password prompt hides your input. Keep this local file private. Future
+terminals use these settings automatically; `DATABASE_URL`, when set, takes
+precedence. PostgreSQL must run, but pgAdmin does not need to be open. The standard
+Windows PostgreSQL 18 client library is detected automatically; see
+[database setup](docs/database.md) for other paths.
+
+`refresh_data.py` checks the connection/schema, fetches and validates XBRL facts,
+then imports the complete batch into PostgreSQL. Failed refreshes preserve the
+previous database results and display a warning. It does not refresh narrative
+summaries. To reopen saved results, run only Streamlit. After a refresh,
+rerun/reload the page to read the latest database snapshot. This upgrade does not
+schedule updates or continuously poll the database.
+
+The app has three tabs:
+
+- **Financial overview:** annual/quarterly revenue, net income, margins, cash flow,
+  assets and liabilities, with exact dates, KPI cards and source-value CSV export.
+- **Company comparison:** selected companies and metric, period-end year/quarter,
+  reporting dates and an optional exact-end-date requirement.
+- **Filings:** the original company/form filters and grouped 8-K highlights.
+
+Missing values stay unavailable. These are reported financial results, not
+share-price charts. See [analytics contracts and limitations](docs/analytics.md).
+
+To refresh the separate narrative filing browser:
+
 ```powershell
 python main.py
 if ($LASTEXITCODE -eq 0) { python process_filings.py }
@@ -52,7 +88,9 @@ python -m streamlit run dashboard.py
 | `main.py` | Retrieve recent filing metadata | `data/filings.json` |
 | `process_filings.py` | Download HTML and extract text; record successes and failures | `data/raw_html/`, `data/clean_text/`, `data/processed_filings.json` |
 | `summarize_filings.py` | Summarise successfully processed filings | `data/summaries.json` |
-| `dashboard.py` | Filter summaries by company and form and link to SEC sources | Local Streamlit dashboard |
+| `dashboard.py` | Financial charts, company comparisons and filing browser | Local Streamlit dashboard |
+| `configure_database.py` | Verify and save a private local connection once | Ignored `.streamlit/secrets.toml` |
+| `refresh_data.py` | Fetch/validate XBRL facts and transactionally import them | PostgreSQL + `data/refresh_status.json` |
 
 The commands above use PowerShell; stop on any failure when running stages
 manually on other shells. A failed stage returns a nonzero exit code. The
@@ -118,8 +156,8 @@ python database.py status
 Imports verify the raw snapshots, preserve candidates and source links, and load
 all companies in one transaction. Repeating an import does not duplicate business
 records. Database setup, the managed-Windows driver fallback, tests and backup
-examples are in [the database guide](docs/database.md). The current filing browser
-still reads its saved JSON summaries; financial charts follow in upgrade 5.
+examples are in [the database guide](docs/database.md). The Filings tab reads JSON
+summaries; the financial tabs query PostgreSQL.
 
 ## Repository
 
@@ -132,6 +170,8 @@ summarize_filings.py   Summary generation entry point
 dashboard.py           Streamlit entry point
 ingest_financials.py    Structured XBRL ingestion and offline replay
 database.py            PostgreSQL migration, import and status commands
+configure_database.py  One-time private local database setup
+refresh_data.py        Financial ingestion and PostgreSQL import in one command
 migrations/            Checksum-tracked PostgreSQL schema changes
 src/                   Shared SEC, download, parsing, storage and summary code
 docs/                  Project brief, architecture and verification guidance

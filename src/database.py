@@ -3,21 +3,13 @@ from datetime import datetime
 from decimal import Decimal
 import hashlib
 import json
-import os
 from pathlib import Path
 import re
 import uuid
 
-# Optional supported fallback for managed Windows machines that disallow the
-# wheel's native extension. No machine-wide PATH or security policy is changed.
-_libpq_directory = os.environ.get("PG_LIBPQ_DIR")
-_dll_handle = None
-if _libpq_directory:
-    _libpq_directory = str(Path(_libpq_directory).resolve(strict=True))
-    os.environ["PATH"] = _libpq_directory + os.pathsep + os.environ.get("PATH", "")
-    os.environ.setdefault("PSYCOPG_IMPL", "python")
-    if os.name == "nt":
-        _dll_handle = os.add_dll_directory(_libpq_directory)
+from src.db_config import prepare_driver
+
+prepare_driver()
 
 import psycopg
 from psycopg import sql

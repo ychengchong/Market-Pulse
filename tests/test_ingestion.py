@@ -283,7 +283,9 @@ class PipelineTests(unittest.TestCase):
         save_filings_to_json({"status": "failed", "output_updated": False, "items": [
             {"status": "failed", "company": "Test", "accession_number": ACCESSION, "error": "HTTP 403"}
         ]}, "data/processing_status.json")
-        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30).run()
+        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30)
+        app.session_state["main_view"] = "Filings"
+        app.run()
         self.assertFalse(app.exception)
         self.assertEqual(len(app.warning), 2)
         self.assertTrue(any("older run" in warning.value for warning in app.warning))
@@ -296,7 +298,9 @@ class PipelineTests(unittest.TestCase):
         with patch.object(process_filings, "download_filing_html", return_value=HTML):
             self.assertEqual(process_filings.main(), 0)
         self.assertEqual(summarize_filings.main(), 0)
-        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30).run()
+        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30)
+        app.session_state["main_view"] = "Filings"
+        app.run()
         self.assertFalse(app.exception)
         app.sidebar.selectbox[0].select("Test").run()
         app.sidebar.selectbox[1].select("8-K").run()
@@ -308,7 +312,9 @@ class PipelineTests(unittest.TestCase):
 
         Path("data").mkdir()
         Path("data/summaries.json").write_text("{broken")
-        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30).run()
+        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30)
+        app.session_state["main_view"] = "Filings"
+        app.run()
         self.assertFalse(app.exception)
         self.assertEqual(len(app.error), 1)
 
@@ -319,7 +325,9 @@ class PipelineTests(unittest.TestCase):
         save_filings_to_json({"status": "success", "output_updated": True,
                              "finished_at": "2026-11-08T10:00:00+00:00", "items": []},
                             "data/metadata_status.json")
-        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30).run()
+        app = AppTest.from_file(str(self.original / "dashboard.py"), default_timeout=30)
+        app.session_state["main_view"] = "Filings"
+        app.run()
         self.assertFalse(app.exception)
         self.assertTrue(any("newer results" in warning.value for warning in app.warning))
 

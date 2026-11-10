@@ -42,3 +42,7 @@ scope are recorded in [the project brief](../docs/problem.md#recorded-follow-up-
 
 Upgrade 4 adds [PostgreSQL verification evidence](postgres-storage-v1.json). The
 new summary report reflects a dependency-identity change, not a quality improvement.
+
+Upgrade 5 adds [financial analytics verification](financial-analytics-v1.json):
+synthetic numerical expectations, real PostgreSQL queries/imports and dashboard
+rendering. This is integration evidence, not a human-reviewed accounting benchmark.

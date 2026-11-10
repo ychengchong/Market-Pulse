@@ -1,8 +1,8 @@
 # PostgreSQL persistence
 
 Upgrade 4 adds an explicit PostgreSQL importer for upgrade 3's validated XBRL
-artifact. It does not change the existing filing dashboard to read SQL yet or
-add charts; analytics and company comparisons are upgrade 5.
+artifact. Upgrade 5 now reads those facts for financial charts and company
+comparisons; see [analytics and one-command refresh](analytics.md).
 
 ## Setup
 
@@ -16,6 +16,14 @@ Install the updated [hash-locked runtime](reproducibility.md). Set your actual
 connection string only in your local environment, using the placeholders below
 as a guide. `.env.example` is a reference, not an automatically loaded config.
 Never commit a real password or print the connection string in reports.
+
+For ongoing local use, `python configure_database.py` verifies and saves a private
+connection in ignored `.streamlit/secrets.toml`, shared by the CLI and dashboard.
+It defaults to database `Market Pulse` and user `postgres`; use `--database` and
+`--user` for your own installation. You no longer need to re-enter terminal
+environment variables each session. Environment `DATABASE_URL` takes precedence.
+Then `python refresh_data.py` fetches, validates and imports in one operation.
+The manual migration/import commands below remain available for troubleshooting.
 
 ```powershell
 python -m pip install --require-hashes -r requirements.txt
@@ -50,6 +58,9 @@ python database.py status
 Use your actual trusted PostgreSQL installation directory. This selects Python
 mode unless `PSYCOPG_IMPL` was already explicitly set, and adjusts DLL search only
 inside the Python process. It does not change Windows policy or machine-wide PATH.
+The standard `C:/Program Files/PostgreSQL/18/bin` installation is now detected
+automatically. Other trusted paths can be saved as `[database].libpq_dir` in the
+private TOML settings or provided through `PG_LIBPQ_DIR`.
 The versioned package lock still includes both driver packages; the selected
 implementation is recorded in the verification report.
 

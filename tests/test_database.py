@@ -118,6 +118,29 @@ class PostgresTests(DatasetWorkspace):
         self.assertEqual(database.migrate(self.conn, self.schema), 1)
         self.assertEqual(self.conn.execute("SELECT count(*) FROM schema_migrations").fetchone()[0], 1)
 
+    def test_analytics_reads_exact_selected_values_and_sources(self):
+        from src.analytics import load_financials, build_periods
+        database.import_dataset(self.conn, self.dataset(), self.schema)
+        data = load_financials(TEST_DSN, self.schema)
+        self.assertEqual(len(data["companies"]), 1)
+        period = build_periods(data, "0000000001", "Quarterly")[-1]
+        self.assertEqual(period["revenue"], Decimal(130))
+        self.assertEqual(period["net_income"], Decimal(-20))
+        self.assertEqual(period["net_margin"], Decimal(-20)/Decimal(130)*100)
+        self.assertTrue(period["sources"]["revenue"]["source_url"].startswith("https://www.sec.gov/Archives/"))
+        # Fixture's annual-length value has Q2 metadata, so it cannot establish an annual report period.
+        self.assertEqual(build_periods(data,"0000000001","Annual"), [])
+
+    def test_analytics_preserves_ambiguous_period_without_guessing(self):
+        from src.analytics import load_financials, build_periods
+        payload=json.loads(RAW)
+        rows=payload["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]
+        rows.append(dict(rows[-1],val=999,accn="0000000001-25-000002"))
+        database.import_dataset(self.conn,self.dataset([self.record(raw=json.dumps(payload).encode())]),self.schema)
+        period=build_periods(load_financials(TEST_DSN,self.schema),"0000000001","Quarterly")[-1]
+        self.assertIsNone(period["revenue"])
+        self.assertIsNone(period["net_margin"])
+
     def test_migration_checksum_change_is_refused(self):
         migrations = database._migrations()
         with patch("src.database._migrations", return_value=[(migrations[0][0], migrations[0][1] + "\n-- changed")]):

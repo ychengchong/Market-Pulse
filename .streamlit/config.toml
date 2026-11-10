@@ -1,0 +1,14 @@
+[theme]
+base = "light"
+primaryColor = "#0f766e"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f3f6f8"
+textColor = "#172b3a"
+borderColor = "#dce4e9"
+font = "sans serif"
+baseFontSize = 14
+headingFontSizes = ["28px", "23px", "20px", "17px", "15px", "14px"]
+metricValueFontSize = "1.65rem"
+paddingTop = "0.25rem"
+paddingBottom = "0.25rem"
+chartCategoricalColors = ["#0f766e", "#7c3a64", "#2563eb", "#b45309", "#64748b"]

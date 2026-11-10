@@ -131,7 +131,8 @@ and offline evidence. Live checks establish API/schema coverage; they do not
 independently audit every financial value against financial statements.
 
 The validated output can now be loaded with the [PostgreSQL importer](database.md).
-Financial dashboard charts and controlled calculations follow in upgrade 5. Relevant-exhibit ingestion is
+Financial dashboard charts and controlled calculations are now implemented in
+[upgrade 5](analytics.md). Relevant-exhibit ingestion is
 still a separate prerequisite before LLM narrative extraction.
 
 Sources: [SEC companyfacts API and scope](https://www.sec.gov/search-filings/edgar-application-programming-interfaces)

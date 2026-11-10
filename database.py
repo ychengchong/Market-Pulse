@@ -1,9 +1,9 @@
 """Migrate and load a user-configured PostgreSQL database."""
 import argparse
 import json
-import os
 from pathlib import Path
 
+from src.db_config import connection_string
 from src.database import database_status, import_dataset, migrate
 import psycopg
 
@@ -13,10 +13,10 @@ def main(argv=None):
     parser.add_argument("command", choices=("migrate", "import", "status"))
     parser.add_argument("--input", type=Path, default=Path("data/financial_facts.json"))
     args = parser.parse_args(argv)
-    dsn = os.environ.get("DATABASE_URL")
-    if not dsn:
-        parser.error("Set DATABASE_URL locally; do not put credentials in source files")
     try:
+        dsn = connection_string()
+        if not dsn:
+            raise ValueError("Run configure_database.py or set DATABASE_URL locally")
         with psycopg.connect(dsn, autocommit=True, connect_timeout=10, application_name="market-pulse") as conn:
             if args.command == "migrate":
                 print(f"Database ready: {migrate(conn)} migration(s) verified")
