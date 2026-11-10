@@ -4,7 +4,7 @@ Market Pulse is a local financial dashboard for Nvidia, Microsoft, Alphabet,
 Amazon and Apple. Explore PostgreSQL-backed financial trends, compare company
 results, and browse source-linked SEC filing highlights. No AI API key is required.
 
-**[CHECK OUT THE LIVE DEMO APP HERE :))](https://dashboardpy-vb47k7ptczxxujve3xrqk3.streamlit.app/)**
+**[CHECK OUT THE LIVE DEMO APP HERE 🤩](https://dashboardpy-vb47k7ptczxxujve3xrqk3.streamlit.app/)**
 
 ## How it looks
 
