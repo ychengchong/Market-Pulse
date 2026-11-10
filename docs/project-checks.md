@@ -71,6 +71,13 @@ Run the full test command above with `MARKET_PULSE_TEST_DATABASE_URL` pointing t
 a disposable local database for real SQL verification. Without that setting,
 database cases are skipped. See [analytics evidence](../reports/financial-analytics-v1.json).
 
+`tests/test_demo.py` additionally verifies frozen snapshot integrity, public-field
+allowlisting, exact Decimal round trips, missing inputs and all three tabs without
+database settings or generated local data. A local verification compares the
+frozen calculations and retained sources to PostgreSQL across every supported
+annual/quarterly interval. Linux wheels are hash-checked separately; do not claim
+a Linux runtime or public deployment pass from Windows-only application tests.
+
 Further accounting review and any future quarter derivation need these gates;
 they are not claims of completed human review:
 

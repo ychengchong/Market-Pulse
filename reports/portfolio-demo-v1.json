@@ -1,0 +1,70 @@
+{
+  "recorded_at": "2026-11-10T11:10:04.073169+00:00",
+  "branch": "feat/portfolio-demo",
+  "state": "local_uncommitted_not_deployed",
+  "snapshot": {
+    "sha256": "f6724743bbb85c69c01ec7d7480f763e4ccd22971bcd9c44f8abf58c7493a391",
+    "payload_sha256": "4d74fdf3465f25cfc4e14c17930940c50f60a5dc956746fcb85153046ef19843",
+    "bytes": 607908,
+    "exported_at": "2026-11-10T11:04:35.923447+00:00",
+    "companies": 5,
+    "observations": 1003,
+    "filings": 25,
+    "financial_as_of": {
+      "GOOGL": "2026-11-10",
+      "AMZN": "2026-11-10",
+      "AAPL": "2026-11-10",
+      "MSFT": "2026-11-10",
+      "NVDA": "2026-11-10"
+    }
+  },
+  "verification": {
+    "full_suite": {
+      "tests": 140,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "real_postgresql_cases": 16
+    },
+    "snapshot_parity": {
+      "company_count": 5,
+      "annual_and_quarterly_intervals": 115,
+      "exact_values_ratios_growth_and_retained_sources_match": true
+    },
+    "offline_import_check": "All three tabs passed with src.database and psycopg imports explicitly blocked",
+    "running_agent_api": {
+      "financial_overview": "ready",
+      "company_comparison": "ready",
+      "filings": "ready"
+    },
+    "linux_lock": {
+      "packages": 34,
+      "target": "Linux x86_64 / CPython 3.14",
+      "wheel_download_and_hash_checks": "passed",
+      "native_runtime": "not tested",
+      "hosted_build": "not yet deployed"
+    },
+    "original_environment": "39-package Windows CPython 3.14.5 lock unchanged and verified",
+    "summary_baseline": "15/15 cases reproduce baseline-v3; two expected fallbacks; unchanged",
+    "syntax": "37 Python files parsed",
+    "diff_check": "passed"
+  },
+  "source_sha256": {
+    "src/demo.py": "50291017df22f04db2fcebfb865b05dff92438167918c66a1a06a5a68bfec854",
+    "src/app.py": "ad8c6f98f5e299a3540aa3e24326faaf94ff26384d2ec594c50add9ec608917a",
+    "src/analytics.py": "e4de14f18e10d320a4953b6788e49e340fe3a8ca5546caf11fad60c2e4e9e19e",
+    "src/financial_ui.py": "9a99aee0914ce217c86b13fe27a3985137e0e67bef00ad8d2e5e0f98c9e9f878",
+    "src/filing_ui.py": "887c78bfe1ff09dc268431aca612a5c2f1e2b73229d677e931f5b5943f189549",
+    "export_demo.py": "a11b74730d50e2673e2566acbe0f0a351197968994faecea5dc9ebf9bc14ba56",
+    "demo/dashboard.py": "da5258861437ff48ac1724bae84c957cbd01d4ac4f61485849762e58d84b835f",
+    "demo/requirements.txt": "78db8f812ce80670538c4e4a80646777e4bb35b9a591bd067d2be777b4eedba8",
+    "dashboard.py": "cc438defea646828563ce1d2d32816e1992f1e75c79b984c077d59c33a544fca"
+  },
+  "limitations": [
+    "Source financials and summaries were frozen from existing local data; no new live SEC availability check.",
+    "No independent human accounting or narrative accuracy audit is claimed.",
+    "Snapshot checksum detects corruption but is not an authenticity signature.",
+    "Free cloud hosting, wake-up behavior and public URL remain to be verified after deployment.",
+    "No scheduled ingestion, AI calls or database access are enabled by the demo."
+  ]
+}

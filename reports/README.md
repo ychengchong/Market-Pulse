@@ -46,3 +46,7 @@ new summary report reflects a dependency-identity change, not a quality improvem
 Upgrade 5 adds [financial analytics verification](financial-analytics-v1.json):
 synthetic numerical expectations, real PostgreSQL queries/imports and dashboard
 rendering. This is integration evidence, not a human-reviewed accounting benchmark.
+
+The [frozen portfolio demo verification](portfolio-demo-v1.json) records snapshot
+precision/provenance parity, offline tab checks and Linux wheel hash verification.
+It does not claim a completed hosted deployment or native Linux runtime check.

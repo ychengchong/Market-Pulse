@@ -4,7 +4,7 @@ from pathlib import Path
 import streamlit as st
 
 
-def render_filings():
+def render_filings(frozen_summaries=None, frozen_at=None, summaries_updated_at=None):
     SUMMARIES_FILE = Path("data/summaries.json")
     def display_time(value):
         try:
@@ -20,7 +20,7 @@ def render_filings():
     update_details = []
     
     run_reports = {}
-    for stage in ("metadata", "processing", "summaries"):
+    for stage in (() if frozen_summaries is not None else ("metadata", "processing", "summaries")):
         status_path = Path(f"data/{stage}_status.json")
         if not status_path.exists():
             continue
@@ -63,7 +63,11 @@ def render_filings():
         if source.get("output_updated") and isinstance(finished, str) and isinstance(started, str) and finished > started:
             st.warning(f"{upstream.title()} has newer results. Rerun {downstream} before treating downstream results as current.")
     
-    if not SUMMARIES_FILE.exists():
+    if frozen_summaries is not None:
+        st.caption(f"Frozen filing snapshot exported {display_time(frozen_at)}; no automatic updates.")
+        if summaries_updated_at:
+            st.caption(f"Source summaries generated {display_time(summaries_updated_at)}")
+    if frozen_summaries is None and not SUMMARIES_FILE.exists():
         st.error(
             "data/summaries.json was not found. "
             "Run the pipeline scripts first."
@@ -71,8 +75,11 @@ def render_filings():
         st.stop()
     
     try:
-        with SUMMARIES_FILE.open("r", encoding="utf-8") as json_file:
-            summaries = json.load(json_file)
+        if frozen_summaries is not None:
+            summaries = frozen_summaries
+        else:
+            with SUMMARIES_FILE.open("r", encoding="utf-8") as json_file:
+                summaries = json.load(json_file)
         required = {"company", "ticker", "form", "filing_date", "event_type", "summary",
                     "summary_method", "source_word_count", "filing_url"}
         if not isinstance(summaries, list) or any(
@@ -99,29 +106,26 @@ def render_filings():
         for item in summaries
     })
     
-    st.sidebar.header("Filing browser filters")
-    st.sidebar.caption("These filters apply to the Filings tab.")
-    
-    selected_company = st.sidebar.selectbox(
-        "Company",
-        ["All"] + companies,
-        help="Show one company's filings, or choose All to browse every company."
-    )
-    st.sidebar.caption("Company selects whose disclosures you see.")
-    
-    selected_form = st.sidebar.selectbox(
-        "Filing form",
-        ["All"] + forms,
-        help="Choose a report type. All includes every available filing form."
-    )
-    st.sidebar.caption("Filing form selects the kind of report. Choose All to include every type.")
-    st.sidebar.divider()
-    st.sidebar.markdown("**Filing types at a glance**")
-    st.sidebar.markdown(
-        "**8-K** - Company events and announcements\n\n"
-        "**10-Q** - Quarterly financial report\n\n"
-        "**10-K** - Annual financial report"
-    )
+    st.subheader("Browse filings")
+    st.markdown("Read SEC filing highlights and open the original disclosures. **Use the filters below to narrow the results.**")
+    with st.container(border=True):
+        company_filter, form_filter = st.columns(2, gap="medium")
+        selected_company = company_filter.selectbox(
+            "Company", ["All"] + companies, key="filing_company",
+            help="Show one company's filings, or choose All to browse every company.")
+        company_filter.markdown("**Choose whose disclosures you see.** All includes every monitored company.")
+        selected_form = form_filter.selectbox(
+            "Filing form", ["All"] + forms, key="filing_form",
+            help="Choose a report type. All includes every available filing form.")
+        form_filter.markdown("**Choose the kind of report.** All includes every available form.")
+        st.divider()
+        for column, form, description in zip(
+            st.columns(3, gap="medium"),
+            ("8-K", "10-Q", "10-K"),
+            ("Company events and announcements", "Quarterly financial report", "Annual financial report"),
+        ):
+            column.markdown(f"### {form}")
+            column.markdown(f"**{description}**")
     
     filtered_summaries = []
     

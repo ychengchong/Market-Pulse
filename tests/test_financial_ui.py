@@ -38,7 +38,9 @@ class FinancialUITests(DatasetWorkspace):
             app.session_state["main_view"]="Filings"
             app.run()
             self.assertFalse(app.exception)
-            self.assertEqual(len(app.sidebar.selectbox),2)
+            self.assertEqual(len(app.sidebar.selectbox),0)
+            self.assertEqual(app.selectbox(key="filing_company").value,"All")
+            self.assertEqual(app.selectbox(key="filing_form").value,"All")
             app.session_state["main_view"]="Company comparison"
             app.run()
             self.assertFalse(app.exception)

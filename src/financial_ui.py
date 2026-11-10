@@ -1,4 +1,4 @@
-"""Streamlit financial views; analytical values come only from PostgreSQL."""
+"""Shared financial views for PostgreSQL results and the frozen public snapshot."""
 import csv
 from datetime import timezone, timedelta
 from decimal import Decimal
@@ -170,16 +170,16 @@ def render_comparison(data):
         st.dataframe([dict(Company=row["company"]["ticker"],**source) for row in matches if row["period"] for source in source_table([row["period"]])],hide_index=True,column_config={"Source":st.column_config.LinkColumn("SEC filing")})
 
 
-def render_financials(overview_tab, comparison_tab):
+def render_financials(overview_tab, comparison_tab, frozen_data=None):
     try:
-        dsn = connection_string()
-        if not dsn:
+        dsn = connection_string() if frozen_data is None else None
+        if frozen_data is None and not dsn:
             for tab in (overview_tab,comparison_tab):
                 with tab:
                     st.info("Connect your PostgreSQL database to view financial charts. Set DATABASE_URL or add local database settings in .streamlit/secrets.toml, then run python refresh_data.py. The Filings tab remains available.")
             return
         from src.analytics import load_financials
-        data = load_financials(dsn)
+        data = load_financials(dsn) if frozen_data is None else frozen_data
         if not data["companies"]:
             raise ValueError("No imported companies")
     except Exception:
@@ -188,7 +188,7 @@ def render_financials(overview_tab, comparison_tab):
                 st.error("Financial data is unavailable. Check PostgreSQL and connection settings, then run python refresh_data.py. Saved filing summaries remain available in Filings.")
         return
     status=Path("data/refresh_status.json")
-    if status.exists():
+    if frozen_data is None and status.exists():
         try:
             report=json.loads(status.read_text(encoding="utf-8"))
             if report.get("status") != "success":
