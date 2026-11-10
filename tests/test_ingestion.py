@@ -302,8 +302,8 @@ class PipelineTests(unittest.TestCase):
         app.session_state["main_view"] = "Filings"
         app.run()
         self.assertFalse(app.exception)
-        app.sidebar.selectbox[0].select("Test").run()
-        app.sidebar.selectbox[1].select("8-K").run()
+        app.selectbox(key="filing_company").select("Test").run()
+        app.selectbox(key="filing_form").select("8-K").run()
         self.assertFalse(app.exception)
         self.assertEqual([metric.value for metric in app.metric], ["1", "1", "1"])
 
