@@ -50,7 +50,7 @@ outside this branch's scope. Narrative quality work is also deferred.
 From the repository root in the locked environment:
 
 ```powershell
-python -m evals.run --verify reports/rule-based-baseline-v2.json
+python -m evals.run --verify reports/rule-based-baseline-v3.json
 ```
 
 To evaluate a future change without replacing the baseline:

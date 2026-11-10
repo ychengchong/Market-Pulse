@@ -130,8 +130,8 @@ See [the verification record](../reports/xbrl-ingestion-v1.json) for bounded liv
 and offline evidence. Live checks establish API/schema coverage; they do not
 independently audit every financial value against financial statements.
 
-The next numbered upgrade is PostgreSQL persistence. Financial dashboard charts
-and controlled calculations follow in upgrade 5. Relevant-exhibit ingestion is
+The validated output can now be loaded with the [PostgreSQL importer](database.md).
+Financial dashboard charts and controlled calculations follow in upgrade 5. Relevant-exhibit ingestion is
 still a separate prerequisite before LLM narrative extraction.
 
 Sources: [SEC companyfacts API and scope](https://www.sec.gov/search-filings/edgar-application-programming-interfaces)

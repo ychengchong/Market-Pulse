@@ -18,7 +18,7 @@ three-company example in the supplied proposal does not replace it.
 Implemented: metadata collection, filing HTML downloads, text extraction,
 deterministic rule-based highlights, JSON checkpoints and a Streamlit filing
 browser, plus source-linked XBRL financial-fact ingestion and offline replay.
-PostgreSQL analytics, embeddings, retrieval,
+PostgreSQL persistence is implemented; financial analytics, embeddings, retrieval,
 LLM answers and query routing are not implemented yet. Current extractive
 highlights remain the baseline for future comparisons.
 
@@ -57,8 +57,12 @@ replay. See [financial-fact ingestion](financial-facts.md) for its initial metri
 mapping and bounds. Fiscal-period derivation and accounting-value review remain
 explicit follow-ups; duration buckets do not prove fiscal labels.
 
-Next in the agreed sequence: PostgreSQL persistence, then financial analytics
-before adding an LLM.
+Upgrade 4 adds checksum-tracked PostgreSQL migrations, verified transactional
+imports, immutable source candidates, dataset-specific observations, audit runs
+and a selected-facts view. See [database contracts](database.md). The dashboard
+continues to read filing JSON until the analytics UI is implemented.
+
+Next in the agreed sequence: financial analytics before adding an LLM.
 
 The supplied development-duration estimates are planning suggestions, not
 committed delivery dates. No paid provider or external deployment is selected.
@@ -67,7 +71,7 @@ committed delivery dates. No paid provider or external deployment is selected.
 
 This table is the current implementation roadmap. Keep the original upgrade
 numbers and branch names; exhibit ingestion is an additional prerequisite before
-upgrade 6. Upgrades 1 and 2 are implemented and merged into main. Upgrade 3 is
+upgrade 6. Upgrades 1 through 3 are implemented and merged into main. Upgrade 4 is
 implemented locally on its branch and is not yet committed or pushed. The
 remaining rows describe planned capabilities.
 
@@ -79,8 +83,8 @@ does not claim that branch has been created.
 |---|---|---|---|
 | 1 | Reliable SEC ingestion: bounded retries, response/cache validation, atomic checkpoints, preserved outputs on failure, per-item reports and freshness warnings. | `fix/sec-ingestion-reliability` | Implemented and merged |
 | 2 | Reproducibility and baseline: pinned/hash-locked environment, clean-install verification, versioned inputs/references/results, MD&A and 8-K TOC fixes. Includes the requested grouped 8-K display improvement. | `chore/reproducibility-and-baseline` | Implemented and merged; human reference review pending |
-| 3 | Structured XBRL ingestion: financial facts with source/unit/period provenance; tag mappings, fiscal calendars, amendments and quarter/YTD validation. Independent configurable history window; duration labels preserve exact boundaries without inferring fiscal quarter numbers. | `feat/xbrl-ingestion` | Implemented locally; source-value review pending |
-| 4 | PostgreSQL storage: companies, filings, selected facts and processing status; source-file identities, relationships, migrations and duplicate-safe loads. | `feat/postgres-storage` | Planned |
+| 3 | Structured XBRL ingestion: financial facts with source/unit/period provenance; tag mappings, fiscal calendars, amendments and quarter/YTD validation. Independent configurable history window; duration labels preserve exact boundaries without inferring fiscal quarter numbers. | `feat/xbrl-ingestion` | Implemented and merged; source-value review pending |
+| 4 | PostgreSQL storage: companies, filings, selected facts and processing status; source-file identities, relationships, migrations and duplicate-safe loads. | `feat/postgres-storage` | Implemented locally |
 | 5 | Financial analytics: controlled SQL/Python KPIs, trends, comparable periods, missing-data handling and company comparisons in Streamlit. | `feat/financial-analytics` | Planned |
 | 5a | Exhibit ingestion: discover relevant filing attachments, download/validate/extract them, and retain parent-filing and exhibit source links. Include earnings-release exhibits such as 99.1; do not fetch every attachment blindly. | `feat/exhibit-ingestion` | Planned; separate enhancement before 6 |
 | 6 | LLM narrative extraction: schema-validated events, risks, explanations and entities with supporting evidence; compare against rules for accuracy, completeness, citations, cost and latency. Address page labels, disconnected text and proper 10-K section handling. | `feat/llm-extraction` | Planned |

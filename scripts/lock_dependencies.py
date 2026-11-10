@@ -36,7 +36,7 @@ def render_lock(report, requirements):
               if line.strip() and not line.startswith("#")]
     for requirement in direct:
         name, version = requirement.split("==")
-        name = re.sub(r"[-_.]+", "-", name).lower()
+        name = re.sub(r"[-_.]+", "-", name.split("[")[0]).lower()
         if not entries.get(name, "").startswith(f"{name}=={version} "):
             raise ValueError(f"Direct dependency missing from report: {name}")
     return "\n".join(lines + [entries[name] for name in sorted(entries)]) + "\n"

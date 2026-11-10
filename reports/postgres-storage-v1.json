@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-11-09",
+  "branch": "feat/postgres-storage",
+  "source_revision": "e37cebb0ccb88526767052d2c05646a2caeae72a",
+  "code_sha256": {
+    "database.py": "e0214b9dba56dd6bf79918050bcfea08e8be1e8f3d19803c31292faa9cf00c33",
+    "src/database.py": "aa6d95a11fd4fa2dab2dd39de84b77777ba4af15a4b27361fb805c7546ec4aff",
+    "scripts/lock_dependencies.py": "eee635e722220c0daacda6eaec52883928fd51330f48bf1fbe33360ae21df008"
+  },
+  "environment": {
+    "python": "3.14.5",
+    "implementation": "CPython",
+    "system": "Windows",
+    "machine": "AMD64",
+    "packages": {
+      "altair": "6.3.0",
+      "anyio": "4.16.0",
+      "attrs": "26.1.0",
+      "beautifulsoup4": "4.15.0",
+      "certifi": "2026.10.23",
+      "charset-normalizer": "3.5.2",
+      "click": "8.5.1",
+      "h11": "0.16.0",
+      "idna": "3.20",
+      "itsdangerous": "2.2.0",
+      "jinja2": "3.1.6",
+      "jsonschema": "4.26.0",
+      "jsonschema-specifications": "2025.9.1",
+      "lxml": "6.1.3",
+      "markupsafe": "3.0.4",
+      "narwhals": "2.28.0",
+      "numpy": "2.5.4",
+      "packaging": "26.3",
+      "pandas": "3.1.1",
+      "pillow": "13.0.0",
+      "protobuf": "7.36.2",
+      "psycopg": "3.3.8",
+      "psycopg-binary": "3.3.8",
+      "pyarrow": "26.0.1",
+      "pydeck": "0.9.3",
+      "python-dateutil": "4.0.0",
+      "python-multipart": "0.0.33",
+      "referencing": "0.37.0",
+      "requests": "2.34.2",
+      "rpds-py": "2026.9.1",
+      "soupsieve": "4.0.1",
+      "starlette": "1.10.0",
+      "streamlit": "1.67.0",
+      "typing-extensions": "4.16.0",
+      "tzdata": "2026.6",
+      "urllib3": "2.8.0",
+      "uvicorn": "0.54.0",
+      "watchdog": "7.1.0",
+      "websockets": "17.4"
+    },
+    "requirements_sha256": "3162803e62737a3bb2b8781e2e4caf727e8d13323df9410d9855d4c795168a8c"
+  },
+  "postgres_version": "18.6",
+  "driver": {
+    "version": "3.3.8",
+    "implementation": "python",
+    "libpq_version": 180006
+  },
+  "migrations": {
+    "001_financial_storage.sql": "5c3838a6d745de5c461e3fc1de2afe94b2c2f34707df602f79754ef43fc9be01"
+  },
+  "input_sha256": "0e203a4a192049235e795f1346d77e14ac31c629c807195e4f3d99388bfc7de2",
+  "counts": {
+    "companies": 5,
+    "snapshots": 5,
+    "filings": 115,
+    "financial_facts": 1936,
+    "datasets": 1,
+    "observations": 1003,
+    "ingestion_runs": 2,
+    "current_financial_facts": 1003
+  },
+  "current_observations_by_ticker": {
+    "AAPL": 209,
+    "AMZN": 199,
+    "GOOGL": 174,
+    "MSFT": 216,
+    "NVDA": 205
+  },
+  "audit_statuses": {
+    "success": 2
+  },
+  "checks": {
+    "established_environment_full_suite": {
+      "total": 104,
+      "passed": 104,
+      "skipped": 0
+    },
+    "fresh_environment_database_suite": {
+      "total": 22,
+      "passed": 22,
+      "skipped": 0
+    },
+    "fresh_environment_full_suite": {
+      "total": 104,
+      "passed": 103,
+      "failures": 1,
+      "failing_test": "test_dashboard_displays_failures_and_empty_state",
+      "reason": "Windows Application Control blocked pandas._libs.properties; no policy bypass attempted."
+    },
+    "clean_hash_locked_install": true,
+    "pip_check_passed": true,
+    "summary_baseline_reproduced_cases": 15,
+    "repeated_import_no_business_duplicates": true,
+    "transaction_rollback_verified": true,
+    "concurrent_import_verified": true,
+    "backup_restore_verified": true,
+    "server_restart_persistence_verified": true
+  },
+  "limitations": [
+    "Local test cluster only; no external/paid database or deployment configured.",
+    "Native wheel extension was blocked by Windows; database verification used supported Python mode with official PostgreSQL libpq.",
+    "Raw snapshots remain external and require their own backup; narrative 8-K records and charts are not migrated in this branch.",
+    "Financial source-value human review remains pending; these are software/storage correctness checks."
+  ]
+}
