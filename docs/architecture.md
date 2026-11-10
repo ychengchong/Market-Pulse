@@ -24,7 +24,8 @@ deployment record is configured.
 | Text extraction | `src/html_parser.py` | BeautifulSoup with lxml removes scripts, hidden elements and selected XBRL tags, then returns nonempty lines. The processing script treats empty output as failure. |
 | Processing checkpoint | `process_filings.py` | Copies metadata and adds `html_path`, `text_path`, `text_characters`, `processing_status`, and `processing_error`. Failed attempts have null paths, zero characters and an error string in `data/processing_status.json`. The main checkpoint is replaced only by a complete nonempty successful batch. |
 | Summary generation | `src/summarizer.py`, `summarize_filings.py` | Summary records retain source metadata except `document`, adding `event_type`, `summary`, `source_word_count`, and `summary_method`. Failed processing records and missing/empty text are reported per filing; an incomplete batch preserves the previous summaries. Empty or unsuitable text produces explanatory fallback text. |
-| Display | `dashboard.py` | Loads the summaries array and filters by company/form. Groups 8-Ks per company with dated newest-first entries, source links and expandable long summaries; 10-Q/10-K cards remain individual and metrics count filings. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
+| Filing display | `src/filing_ui.py` via `dashboard.py` | Loads the summaries array and filters by company/form in the Filings tab. Groups 8-Ks per company with dated newest-first entries, source links and expandable long summaries; 10-Q/10-K cards remain individual and metrics count filings. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
+| Financial display | `src/analytics.py`, `src/financial_ui.py` via `dashboard.py` | Read-only consistent PostgreSQL snapshot, exact-period Decimal KPIs, annual/quarterly graphs, company comparisons, missing-data flags and source exports. See [analytics contracts](analytics.md). |
 
 Metadata arrays, filing identities, input-array shape, downloaded HTML and
 dashboard summary fields are validated. These contracts do not yet have a
@@ -77,8 +78,8 @@ normalised into source-linked candidates and exact-period observations in
 Snapshot identities, code identities, metric/tag selection, duration buckets,
 coverage and publication rules are defined in [financial-facts.md](financial-facts.md).
 They are the contract consumed by the PostgreSQL importer. The narrative pipeline
-and its five-filing limit remain separate. Financial charts and quarterly cash-flow
-derivation are not implemented yet.
+and its five-filing limit remain separate. Financial charts now consume PostgreSQL;
+quarterly cash-flow derivation remains unimplemented.
 
 ## Implemented database path
 
@@ -87,15 +88,18 @@ the XBRL artifact against its raw snapshots, then stores company/source identiti
 NUMERIC facts, dataset-specific observations and run history in one transaction.
 Current selected values are exposed through SQL views while older datasets remain
 queryable. Schema, ordering, rollback, credentials and recovery contracts live in
-[database.md](database.md). Raw snapshots stay in external files, and the existing
-filing dashboard remains a JSON consumer until upgrade 5.
+[database.md](database.md). Raw snapshots stay in external files. Financial tabs
+read PostgreSQL; the Filings tab remains a JSON consumer. `configure_database.py`
+verifies/saves private local settings, and `refresh_data.py` checks/migrates,
+ingests, validates and imports financial data. See [analytics](analytics.md) for
+failure boundaries, date alignment and refresh behaviour.
 
 ## Target architecture (planned)
 
 The delivery order and acceptance evidence live in [the project brief](problem.md).
 The following diagram describes the complete target. Structured-fact ingestion,
-PostgreSQL persistence and the narrative filing browser exist; analytics and AI paths remain
-planned as identified in the project brief.
+PostgreSQL persistence, financial analytics and the narrative filing browser exist;
+AI paths remain planned as identified in the project brief.
 
 ```mermaid
 flowchart TD
@@ -113,10 +117,10 @@ flowchart TD
     ANSWER --> UI[Streamlit: Dashboard, Ask AI, Company comparison]
 ```
 
-PostgreSQL now stores structured facts; analytics calculations remain planned. The vector-store choice
+PostgreSQL stores structured facts and supports the implemented analytics. The vector-store choice
 remains open: pgvector can share PostgreSQL persistence, while Chroma would be
 a separate store. Choose one when implementing retrieval. Provider/model choice,
-embedding model and historical ingestion range are also unconfigured.
+and embedding model remain unconfigured; financial history is configurable.
 
 | Planned boundary | Required contract |
 |---|---|

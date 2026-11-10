@@ -18,8 +18,9 @@ three-company example in the supplied proposal does not replace it.
 Implemented: metadata collection, filing HTML downloads, text extraction,
 deterministic rule-based highlights, JSON checkpoints and a Streamlit filing
 browser, plus source-linked XBRL financial-fact ingestion and offline replay.
-PostgreSQL persistence is implemented; financial analytics, embeddings, retrieval,
-LLM answers and query routing are not implemented yet. Current extractive
+PostgreSQL persistence, financial trends, KPI cards and company comparisons are
+implemented through upgrade 5. Embeddings, retrieval, LLM answers and query
+routing remain deferred. Current extractive
 highlights remain the baseline for future comparisons.
 
 ## Delivery milestones
@@ -59,10 +60,13 @@ explicit follow-ups; duration buckets do not prove fiscal labels.
 
 Upgrade 4 adds checksum-tracked PostgreSQL migrations, verified transactional
 imports, immutable source candidates, dataset-specific observations, audit runs
-and a selected-facts view. See [database contracts](database.md). The dashboard
-continues to read filing JSON until the analytics UI is implemented.
+and a selected-facts view. See [database contracts](database.md).
 
-Next in the agreed sequence: financial analytics before adding an LLM.
+Upgrade 5 adds PostgreSQL-backed financial charts, exact-period KPI calculations,
+company comparisons, source-value export, persistent local connection settings
+and a financial fetch/validate/import command. The original filing browser remains
+a separate tab. See [analytics contracts](analytics.md). This is the user's
+stopping point for now; subsequent AI upgrades and public hosting remain deferred.
 
 The supplied development-duration estimates are planning suggestions, not
 committed delivery dates. No paid provider or external deployment is selected.
@@ -71,9 +75,9 @@ committed delivery dates. No paid provider or external deployment is selected.
 
 This table is the current implementation roadmap. Keep the original upgrade
 numbers and branch names; exhibit ingestion is an additional prerequisite before
-upgrade 6. Upgrades 1 through 3 are implemented and merged into main. Upgrade 4 is
-implemented locally on its branch and is not yet committed or pushed. The
-remaining rows describe planned capabilities.
+upgrade 6. Upgrades 1 through 4 are merged into main. Upgrade 5 is implemented
+locally on its branch and is not yet committed or pushed. Subsequent rows remain
+planned and deferred.
 
 Main goal: **AI-Powered Financial Analytics & Research Platform**.
 Integration branch name, if used: `feat/financial-research-platform`; this document
@@ -84,8 +88,8 @@ does not claim that branch has been created.
 | 1 | Reliable SEC ingestion: bounded retries, response/cache validation, atomic checkpoints, preserved outputs on failure, per-item reports and freshness warnings. | `fix/sec-ingestion-reliability` | Implemented and merged |
 | 2 | Reproducibility and baseline: pinned/hash-locked environment, clean-install verification, versioned inputs/references/results, MD&A and 8-K TOC fixes. Includes the requested grouped 8-K display improvement. | `chore/reproducibility-and-baseline` | Implemented and merged; human reference review pending |
 | 3 | Structured XBRL ingestion: financial facts with source/unit/period provenance; tag mappings, fiscal calendars, amendments and quarter/YTD validation. Independent configurable history window; duration labels preserve exact boundaries without inferring fiscal quarter numbers. | `feat/xbrl-ingestion` | Implemented and merged; source-value review pending |
-| 4 | PostgreSQL storage: companies, filings, selected facts and processing status; source-file identities, relationships, migrations and duplicate-safe loads. | `feat/postgres-storage` | Implemented locally |
-| 5 | Financial analytics: controlled SQL/Python KPIs, trends, comparable periods, missing-data handling and company comparisons in Streamlit. | `feat/financial-analytics` | Planned |
+| 4 | PostgreSQL storage: companies, filings, selected facts and processing status; source-file identities, relationships, migrations and duplicate-safe loads. | `feat/postgres-storage` | Implemented and merged |
+| 5 | Financial analytics: controlled SQL/Python KPIs, trends, explicit period comparisons, missing-data handling and company comparisons in Streamlit; one financial refresh command and persistent local connection settings. | `feat/financial-analytics` | Implemented locally; stopping point for now |
 | 5a | Exhibit ingestion: discover relevant filing attachments, download/validate/extract them, and retain parent-filing and exhibit source links. Include earnings-release exhibits such as 99.1; do not fetch every attachment blindly. | `feat/exhibit-ingestion` | Planned; separate enhancement before 6 |
 | 6 | LLM narrative extraction: schema-validated events, risks, explanations and entities with supporting evidence; compare against rules for accuracy, completeness, citations, cost and latency. Address page labels, disconnected text and proper 10-K section handling. | `feat/llm-extraction` | Planned |
 | 7 | Filing retrieval: section-aware source-linked chunks, embeddings and one chosen vector store (pgvector or Chroma); evaluate retrieval separately. | `feat/filing-retrieval` | Planned |
@@ -170,7 +174,8 @@ and retention policy remain to be agreed before release claims. See
 
 - The current scripts run in order from the repository root, with one operator.
 - Configure an identifying SEC contact header before fetching live data.
-- Current checkpoints are local files; database and vector persistence are planned.
+- Narrative checkpoints/raw snapshots remain local files; validated financial facts
+  persist in PostgreSQL. Vector persistence remains planned.
 - Keep raw source snapshots and expose failed or missing records to the operator.
 - Use allowlisted, parameterised analytical queries or controlled functions;
   do not execute unrestricted LLM-generated SQL.

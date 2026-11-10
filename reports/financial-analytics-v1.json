@@ -1,0 +1,112 @@
+{
+  "recorded_at": "2026-11-10T09:19:51.547920+00:00",
+  "branch": "feat/financial-analytics",
+  "base_commit": "ba9f3e271d6ad75914afba9ed378f293bc21343b",
+  "state": "local_uncommitted",
+  "environment": {
+    "python": "3.14.5",
+    "os": "Windows AMD64",
+    "locked_packages": 39,
+    "driver": "psycopg Python implementation with official PostgreSQL libpq"
+  },
+  "checks": {
+    "full_suite": {
+      "tests": 130,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "real_postgresql_cases": 16
+    },
+    "baseline": {
+      "report": "rule-based-baseline-v3.json",
+      "cases": 15,
+      "passed": 15,
+      "errors": 0,
+      "fallbacks": 2,
+      "identity_matches": true
+    },
+    "syntax": "29 Python files parsed",
+    "imports": "passed",
+    "git_diff_check": "passed",
+    "offline_refresh": {
+      "status": "success",
+      "companies": 5,
+      "selected_observations": 1003,
+      "network_calls": 0
+    },
+    "browser": "Opened financial overview against isolated PostgreSQL; revenue, margins, cash flow and balance charts rendered. Sidebar default/legend sizing subsequently refined; UI regression checks cover rendering."
+  },
+  "database_counts": {
+    "companies": 5,
+    "snapshots": 5,
+    "filings": 115,
+    "financial_facts": 1936,
+    "datasets": 2,
+    "observations": 2006,
+    "ingestion_runs": 3,
+    "current_financial_facts": 1003
+  },
+  "companies": [
+    {
+      "ticker": "GOOGL",
+      "as_of": "2026-11-09",
+      "dataset_id": "0901130b6b08ec929eb645a8f88abbd545554a20f892c1261da2c8c6b04ae02b",
+      "snapshot_id": "f87bc183f74b45ecf9a0933e0e0a1b6b97ead51a9d29367a7dae436574e1c1d0",
+      "annual_periods": 5,
+      "quarterly_periods": 18
+    },
+    {
+      "ticker": "AMZN",
+      "as_of": "2026-11-09",
+      "dataset_id": "0901130b6b08ec929eb645a8f88abbd545554a20f892c1261da2c8c6b04ae02b",
+      "snapshot_id": "acddb7c0a6973a1fd08372de3b292298a34eae7f42a7eedc4bdebd3ac659c8fd",
+      "annual_periods": 5,
+      "quarterly_periods": 18
+    },
+    {
+      "ticker": "AAPL",
+      "as_of": "2026-11-09",
+      "dataset_id": "0901130b6b08ec929eb645a8f88abbd545554a20f892c1261da2c8c6b04ae02b",
+      "snapshot_id": "f085735b4d08fb116ade18d24247ffabe11df8eb52eae6556b165831f15ef1ad",
+      "annual_periods": 6,
+      "quarterly_periods": 17
+    },
+    {
+      "ticker": "MSFT",
+      "as_of": "2026-11-09",
+      "dataset_id": "0901130b6b08ec929eb645a8f88abbd545554a20f892c1261da2c8c6b04ae02b",
+      "snapshot_id": "8c1903c041f5c27e86ed15f37debb1f41882b7904bba129ef9edc76478b1e8ea",
+      "annual_periods": 6,
+      "quarterly_periods": 17
+    },
+    {
+      "ticker": "NVDA",
+      "as_of": "2026-11-09",
+      "dataset_id": "0901130b6b08ec929eb645a8f88abbd545554a20f892c1261da2c8c6b04ae02b",
+      "snapshot_id": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
+      "annual_periods": 6,
+      "quarterly_periods": 17
+    }
+  ],
+  "source_sha256": {
+    "dashboard.py": "2ea915d037d9723f70e34f4506da6ccd96424bf7d222ee8de8e4d51ec4f9b2ea",
+    "src/analytics.py": "2a8d19327122a17d5113b703b78e00aa4b95a47238006c546d71ea142e9bf835",
+    "src/financial_ui.py": "69b4868abf81a254d9ee2ff616093dd8f8713cd6b700c13c99a778ceb8189bf7",
+    "src/filing_ui.py": "2733d3b509b9db6837d200564cbe9cffd55b7aa2de856003fbc0d814f1a4f355",
+    "src/db_config.py": "7bb37c0c0857410fa524ba55a6b12c4220dfd0eaaf8e52554647c1253f66510b",
+    "configure_database.py": "a3c447008996f8ca98ab84faa6698042247441da505afffd7041ea5cb9c4512a",
+    "refresh_data.py": "e94d48d8a44a0f29276190eee946348df84accbc26ed7b2d1deb6cda140e5117",
+    "src/database.py": "91a2da22c64792f969f92939c129292985794a64284dd7823a6106017e53a217",
+    "database.py": "593a225e5cc7ea9e4462fbcb207877c003794d1e4c82393f082d4e4bdcd7c5c9",
+    "requirements.txt": "3162803e62737a3bb2b8781e2e4caf727e8d13323df9410d9855d4c795168a8c"
+  },
+  "limitations": [
+    "Financial expectations in tests use synthetic values; no independent human accounting audit is claimed.",
+    "Cached companyfacts snapshots were replayed; no new live SEC availability claim.",
+    "Windows Application Control blocked pandas in data/.venv-verify; full suite passed in the existing locked .venv. No security policy was changed.",
+    "Quarterly facts are direct disclosures only; no cumulative subtraction, Q4 derivation or fiscal-quarter guessing.",
+    "Different company reporting dates are explicit and warned about; missing metrics remain unavailable.",
+    "No public hosting, monthly scheduler or AI features were enabled.",
+    "The user database on port 5432 was not modified; integration used the isolated local test database."
+  ]
+}
