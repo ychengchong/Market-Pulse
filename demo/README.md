@@ -59,14 +59,14 @@ No refresh is needed for ordinary visitors. To publish new financial data later,
 with your local PostgreSQL running and configured:
 
 ```powershell
-python refresh_data.py
-if ($LASTEXITCODE -eq 0) { python export_demo.py }
+python -m scripts.refresh_data
+if ($LASTEXITCODE -eq 0) { python -m scripts.export_demo }
 ```
 
 To change filing highlights too, run the existing narrative pipeline successfully
-before exporting. `export_demo.py` freezes the currently saved summaries; it does
+before exporting. `scripts/export_demo.py` freezes the currently saved summaries; it does
 not fetch or regenerate them. Check their generation/filing dates in Filings.
-Run only `python export_demo.py` to freeze your existing database and summaries
+Run only `python -m scripts.export_demo` to freeze your existing database and summaries
 without any new SEC requests. The exporter verifies the snapshot before atomic
 replacement and preserves the previous export on failure.
 

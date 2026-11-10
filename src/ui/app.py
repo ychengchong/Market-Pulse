@@ -1,7 +1,7 @@
 """Shared dashboard layout for local PostgreSQL and the portable snapshot demo."""
 import streamlit as st
-from src.financial_ui import render_financials
-from src.filing_ui import render_filings
+from src.ui.financial_ui import render_financials
+from src.ui.filing_ui import render_filings
 
 
 def render_app(demo=None):

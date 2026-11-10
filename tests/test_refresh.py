@@ -6,8 +6,7 @@ import os
 from pathlib import Path
 from unittest.mock import patch
 
-import configure_database
-import refresh_data
+from scripts import configure_database, refresh_data
 import psycopg
 from src.db_config import connection_string
 from test_database import DatasetWorkspace

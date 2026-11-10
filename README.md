@@ -55,6 +55,12 @@ the watchlist, accepted forms (`8-K`, `10-Q`, `10-K`), and per-company limit.
 
 ## Run
 
+Run commands from the repository root with the virtual environment active.
+Operator scripts now live under `scripts/` and run as modules, for example
+`python -m scripts.refresh_data`. The former `main.py` is now
+`scripts/ingest_filings.py`. App launch paths remain `dashboard.py` locally and
+`demo/dashboard.py` for the frozen public demo.
+
 For the **frozen portfolio demo**, no PostgreSQL or credentials are needed:
 
 ```powershell
@@ -72,8 +78,8 @@ the connection once. The defaults are database `Market Pulse`, user `postgres`,
 host `localhost`, port `5432`; command options support other values.
 
 ```powershell
-python configure_database.py
-python refresh_data.py
+python -m scripts.configure_database
+python -m scripts.refresh_data
 python -m streamlit run dashboard.py
 ```
 
@@ -84,7 +90,7 @@ precedence. PostgreSQL must run, but pgAdmin does not need to be open. The stand
 Windows PostgreSQL 18 client library is detected automatically; see
 [database setup](docs/database.md) for other paths.
 
-`refresh_data.py` checks the connection/schema, fetches and validates XBRL facts,
+`scripts/refresh_data.py` checks the connection/schema, fetches and validates XBRL facts,
 then imports the complete batch into PostgreSQL. Failed refreshes preserve the
 previous database results and display a warning. It does not refresh narrative
 summaries. To reopen saved results, run only Streamlit. After a refresh,
@@ -105,20 +111,20 @@ share-price charts. See [analytics contracts and limitations](docs/analytics.md)
 To refresh the separate narrative filing browser:
 
 ```powershell
-python main.py
-if ($LASTEXITCODE -eq 0) { python process_filings.py }
-if ($LASTEXITCODE -eq 0) { python summarize_filings.py }
+python -m scripts.ingest_filings
+if ($LASTEXITCODE -eq 0) { python -m scripts.process_filings }
+if ($LASTEXITCODE -eq 0) { python -m scripts.summarize_filings }
 python -m streamlit run dashboard.py
 ```
 
 | Entry point | Purpose | Output |
 |---|---|---|
-| `main.py` | Retrieve recent filing metadata | `data/filings.json` |
-| `process_filings.py` | Download HTML and extract text; record successes and failures | `data/raw_html/`, `data/clean_text/`, `data/processed_filings.json` |
-| `summarize_filings.py` | Summarise successfully processed filings | `data/summaries.json` |
+| `scripts/ingest_filings.py` | Retrieve recent filing metadata | `data/filings.json` |
+| `scripts/process_filings.py` | Download HTML and extract text; record successes and failures | `data/raw_html/`, `data/clean_text/`, `data/processed_filings.json` |
+| `scripts/summarize_filings.py` | Summarise successfully processed filings | `data/summaries.json` |
 | `dashboard.py` | Financial charts, company comparisons and filing browser | Local Streamlit dashboard |
-| `configure_database.py` | Verify and save a private local connection once | Ignored `.streamlit/secrets.toml` |
-| `refresh_data.py` | Fetch/validate XBRL facts and transactionally import them | PostgreSQL + `data/refresh_status.json` |
+| `scripts/configure_database.py` | Verify and save a private local connection once | Ignored `.streamlit/secrets.toml` |
+| `scripts/refresh_data.py` | Fetch/validate XBRL facts and transactionally import them | PostgreSQL + `data/refresh_status.json` |
 
 The commands above use PowerShell; stop on any failure when running stages
 manually on other shells. A failed stage returns a nonzero exit code. The
@@ -154,13 +160,13 @@ Cached HTML remains available, and invalid cached block pages are refetched.
 Collect XBRL financial facts independently of the filing summaries:
 
 ```powershell
-python ingest_financials.py --start-date 2021-01-01 --as-of 2026-11-09
+python -m scripts.ingest_financials --start-date 2021-01-01 --as-of 2026-11-09
 ```
 
 Replay the saved snapshots without accessing the SEC:
 
 ```powershell
-python ingest_financials.py --offline --start-date 2021-01-01 --as-of 2026-11-09
+python -m scripts.ingest_financials --offline --start-date 2021-01-01 --as-of 2026-11-09
 ```
 
 The stage saves immutable raw snapshots, validated observations and per-metric
@@ -176,9 +182,9 @@ Validated financial facts can now be loaded into a dedicated PostgreSQL database
 
 ```powershell
 # Set DATABASE_URL locally using your own database credentials first.
-python database.py migrate
-python database.py import
-python database.py status
+python -m scripts.database migrate
+python -m scripts.database import
+python -m scripts.database status
 ```
 
 Imports verify the raw snapshots, preserve candidates and source links, and load
@@ -192,21 +198,16 @@ summaries; the financial tabs query PostgreSQL.
 ```text
 AGENTS.md              Codex working conventions
 config.py              Watchlist and request settings
-main.py                Metadata collection entry point
-process_filings.py     Download and text extraction entry point
-summarize_filings.py   Summary generation entry point
-dashboard.py           Streamlit entry point
-ingest_financials.py    Structured XBRL ingestion and offline replay
-database.py            PostgreSQL migration, import and status commands
-configure_database.py  One-time private local database setup
-refresh_data.py        Financial ingestion and PostgreSQL import in one command
+dashboard.py           Local Streamlit launcher
+demo/                  Public demo launcher, frozen snapshot and Linux lock
+scripts/               Ingestion, processing, database, export and environment commands
+src/ui/                Shared Streamlit layout, financial views and filing browser
+src/                   Reusable SEC clients, parsing, analytics and persistence
 migrations/            Checksum-tracked PostgreSQL schema changes
-src/                   Shared SEC, download, parsing, storage and summary code
 docs/                  Project brief, architecture and verification guidance
 tests/                 Ingestion, dashboard and baseline integrity tests
 evals/                 Frozen development cases, references and offline runner
 reports/               Preserved before/after rule-based baseline results
-scripts/               Lock generation and environment verification
 requirements.in        Direct runtime dependency pins
 requirements.txt       Complete Windows/CPython wheel hash lock
 ```
@@ -221,7 +222,7 @@ See [the project brief](docs/problem.md),
 Check Python syntax without importing optional dependencies or creating caches:
 
 ```powershell
-python -c "import ast; from pathlib import Path; files = sorted(Path('.').glob('*.py')) + sorted(Path('src').glob('*.py')); [ast.parse(p.read_text(encoding='utf-8'), filename=str(p)) for p in files]; print(f'Parsed {len(files)} Python files')"
+python -c "import ast; from pathlib import Path; files = list(Path('.').glob('*.py')) + [p for folder in ('src', 'scripts', 'demo', 'tests', 'evals') for p in Path(folder).rglob('*.py')]; [ast.parse(p.read_text(encoding='utf-8'), filename=str(p)) for p in files]; print(f'Parsed {len(files)} Python files')"
 ```
 
 Run offline regression checks after installing the application dependencies:

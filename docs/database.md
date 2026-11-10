@@ -17,27 +17,27 @@ connection string only in your local environment, using the placeholders below
 as a guide. `.env.example` is a reference, not an automatically loaded config.
 Never commit a real password or print the connection string in reports.
 
-For ongoing local use, `python configure_database.py` verifies and saves a private
+For ongoing local use, `python -m scripts.configure_database` verifies and saves a private
 connection in ignored `.streamlit/secrets.toml`, shared by the CLI and dashboard.
 It defaults to database `Market Pulse` and user `postgres`; use `--database` and
 `--user` for your own installation. You no longer need to re-enter terminal
 environment variables each session. Environment `DATABASE_URL` takes precedence.
-Then `python refresh_data.py` fetches, validates and imports in one operation.
+Then `python -m scripts.refresh_data` fetches, validates and imports in one operation.
 The manual migration/import commands below remain available for troubleshooting.
 
 ```powershell
 python -m pip install --require-hashes -r requirements.txt
 $env:DATABASE_URL = "postgresql://market_pulse:YOUR_PASSWORD@localhost:5432/market_pulse"
-python database.py migrate
-python database.py import
-python database.py status
+python -m scripts.database migrate
+python -m scripts.database import
+python -m scripts.database status
 ```
 
 Use a URL-encoded password in a URI, or a properly quoted libpq connection string.
 For hosted services, follow their TLS requirements. The CLI has a connection
 timeout and returns 1 on failure; it does not log credentials or raw database
 exception text. It reads `data/financial_facts.json` by default, or use
-`python database.py import --input path/to/financial_facts.json`.
+`python -m scripts.database import --input path/to/financial_facts.json`.
 
 The importer also needs the original raw snapshot files under
 `data/xbrl_snapshots/`. Transfer the artifact and corresponding snapshots together
@@ -52,7 +52,7 @@ PostgreSQL client library instead. If you encounter the same restriction, set:
 
 ```powershell
 $env:PG_LIBPQ_DIR = "C:/Program Files/PostgreSQL/18/bin"
-python database.py status
+python -m scripts.database status
 ```
 
 Use your actual trusted PostgreSQL installation directory. This selects Python

@@ -7,7 +7,7 @@ from src.db_config import connection_string
 from src.database import migrate, import_dataset
 from src.storage import save_filings_to_json
 import psycopg
-import ingest_financials
+from scripts import ingest_financials
 
 
 def main(argv=None):

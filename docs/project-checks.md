@@ -8,7 +8,7 @@ These checks need neither live SEC access nor application dependencies.
 With the application dependencies installed, check imports:
 
 ```powershell
-python -c "import requests, bs4, lxml, streamlit; import main, process_filings, summarize_filings"
+python -c "import requests, bs4, lxml, streamlit; from scripts import ingest_filings, process_filings, summarize_filings"
 ```
 
 Do not import `dashboard.py` as a library: it executes the Streamlit page.

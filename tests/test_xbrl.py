@@ -11,7 +11,7 @@ import uuid
 
 import requests
 
-import ingest_financials
+from scripts import ingest_financials
 from src.sec_http import SecAccessError
 from src.storage import save_filings_to_json
 from src.xbrl import decode_snapshot, get_snapshot, normalise_company, period_kind

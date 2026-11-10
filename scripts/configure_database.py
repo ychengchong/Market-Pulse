@@ -43,7 +43,7 @@ def main(argv=None):
             conn.execute("SELECT 1")
     except psycopg.Error as error:
         print("Connection failed. " + connection_failure_reason(error))
-        print("No settings were saved. Fix the connection before running refresh_data.py.")
+        print("No settings were saved. Fix the connection before running python -m scripts.refresh_data.")
         return 1
     path.parent.mkdir(parents=True, exist_ok=True)
     # JSON string escaping is compatible with TOML basic string values.

@@ -16,7 +16,7 @@ def main(argv=None):
     try:
         dsn = connection_string()
         if not dsn:
-            raise ValueError("Run configure_database.py or set DATABASE_URL locally")
+            raise ValueError("Run python -m scripts.configure_database or set DATABASE_URL locally")
         with psycopg.connect(dsn, autocommit=True, connect_timeout=10, application_name="market-pulse") as conn:
             if args.command == "migrate":
                 print(f"Database ready: {migrate(conn)} migration(s) verified")

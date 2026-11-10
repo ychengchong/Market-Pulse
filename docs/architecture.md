@@ -3,12 +3,12 @@
 ## Implemented flow and boundaries
 
 ```text
-SEC submissions -> main.py -> data/filings.json
-SEC filing HTML + filings.json -> process_filings.py
+SEC submissions -> scripts/ingest_filings.py -> data/filings.json
+SEC filing HTML + filings.json -> scripts/process_filings.py
   -> data/raw_html/<accession>.html
   -> data/clean_text/<accession>.txt
   -> data/processed_filings.json
-processed_filings.json + clean text -> summarize_filings.py
+processed_filings.json + clean text -> scripts/summarize_filings.py
   -> data/summaries.json -> dashboard.py
 ```
 
@@ -16,16 +16,23 @@ All relative paths resolve from the working directory. The scripts orchestrate
 the stages; `src/` owns reusable operations. No individual component owner or
 deployment record is configured.
 
+Operator entry points live in `scripts/` and run as `python -m scripts.<command>`
+from the repository root. The metadata command is `scripts.ingest_filings`, formerly
+root `main.py`. UI modules live in `src/ui/`; root `dashboard.py` and cloud
+`demo/dashboard.py` remain thin launchers. Immutable historical reports retain
+the filenames and hashes recorded at their original run, rather than being
+rewritten to match the current layout.
+
 | Capability | Implementation | Contract and failure behaviour |
 |---|---|---|
-| Metadata retrieval | `src/sec_client.py` | Returns records with `company`, `ticker`, `cik`, `form`, `filing_date`, `accession_number`, `document`, and `filing_url`. Dates are SEC strings; identifiers are strings. Malformed or misaligned metadata is rejected. `main.py` records company failures; a 403 stops further requests in that run. |
+| Metadata retrieval | `src/sec_client.py` | Returns records with `company`, `ticker`, `cik`, `form`, `filing_date`, `accession_number`, `document`, and `filing_url`. Dates are SEC strings; identifiers are strings. Malformed or misaligned metadata is rejected. `scripts/ingest_filings.py` records company failures; a 403 stops further requests in that run. |
 | Metadata storage | `src/storage.py` | Writes UTF-8 JSON through a same-directory temporary file, flush/fsync and atomic replacement. Filesystem errors propagate; incomplete writes do not truncate the previous checkpoint. |
 | HTML download | `src/filing_downloader.py` | Uses shared `src/sec_http.py`: five request starts/second per sequential process, timeouts, at most three attempts for connection failures, 429 and selected 5xx responses. Honours Retry-After up to 60 seconds; longer waits stop the run. A 403 is actionable and is not retried. Empty, non-HTML and known SEC block pages are rejected. |
 | Text extraction | `src/html_parser.py` | BeautifulSoup with lxml removes scripts, hidden elements and selected XBRL tags, then returns nonempty lines. The processing script treats empty output as failure. |
-| Processing checkpoint | `process_filings.py` | Copies metadata and adds `html_path`, `text_path`, `text_characters`, `processing_status`, and `processing_error`. Failed attempts have null paths, zero characters and an error string in `data/processing_status.json`. The main checkpoint is replaced only by a complete nonempty successful batch. |
-| Summary generation | `src/summarizer.py`, `summarize_filings.py` | Summary records retain source metadata except `document`, adding `event_type`, `summary`, `source_word_count`, and `summary_method`. Failed processing records and missing/empty text are reported per filing; an incomplete batch preserves the previous summaries. Empty or unsuitable text produces explanatory fallback text. |
-| Filing display | `src/filing_ui.py` via `dashboard.py` | Loads the summaries array and filters by company/form in the Filings tab. Groups 8-Ks per company with dated newest-first entries, source links and expandable long summaries; 10-Q/10-K cards remain individual and metrics count filings. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
-| Financial display | `src/analytics.py`, `src/financial_ui.py` via `dashboard.py` | Read-only consistent PostgreSQL snapshot, exact-period Decimal KPIs, annual/quarterly graphs, company comparisons, missing-data flags and source exports. See [analytics contracts](analytics.md). |
+| Processing checkpoint | `scripts/process_filings.py` | Copies metadata and adds `html_path`, `text_path`, `text_characters`, `processing_status`, and `processing_error`. Failed attempts have null paths, zero characters and an error string in `data/processing_status.json`. The main checkpoint is replaced only by a complete nonempty successful batch. |
+| Summary generation | `src/summarizer.py`, `scripts/summarize_filings.py` | Summary records retain source metadata except `document`, adding `event_type`, `summary`, `source_word_count`, and `summary_method`. Failed processing records and missing/empty text are reported per filing; an incomplete batch preserves the previous summaries. Empty or unsuitable text produces explanatory fallback text. |
+| Filing display | `src/ui/filing_ui.py` via `dashboard.py` | Loads the summaries array and filters by company/form in the Filings tab. Groups 8-Ks per company with dated newest-first entries, source links and expandable long summaries; 10-Q/10-K cards remain individual and metrics count filings. Shows per-stage freshness/status and expandable failure details. Missing or invalid summaries produce an error; an empty array produces an explicit warning. |
+| Financial display | `src/analytics.py`, `src/ui/financial_ui.py` via `dashboard.py` | Read-only consistent PostgreSQL snapshot, exact-period Decimal KPIs, annual/quarterly graphs, company comparisons, missing-data flags and source exports. See [analytics contracts](analytics.md). |
 
 Metadata arrays, filing identities, input-array shape, downloaded HTML and
 dashboard summary fields are validated. These contracts do not yet have a
@@ -71,7 +78,7 @@ source-linked attachment ingestion are a recorded follow-up in the project brief
 
 ## Implemented structured-data path
 
-`ingest_financials.py` orchestrates `src/xbrl.py` and the shared SEC request/storage
+`scripts/ingest_financials.py` orchestrates `src/xbrl.py` and the shared SEC request/storage
 helpers. Companyfacts responses are retained as immutable byte snapshots, then
 normalised into source-linked candidates and exact-period observations in
 `data/financial_facts.json`. The stage report is `data/financials_status.json`.
@@ -83,21 +90,21 @@ quarterly cash-flow derivation remains unimplemented.
 
 ## Implemented database path
 
-`database.py` uses `src/database.py` and checksum-tracked SQL migrations. It verifies
+`scripts/database.py` uses `src/database.py` and checksum-tracked SQL migrations. It verifies
 the XBRL artifact against its raw snapshots, then stores company/source identities,
 NUMERIC facts, dataset-specific observations and run history in one transaction.
 Current selected values are exposed through SQL views while older datasets remain
 queryable. Schema, ordering, rollback, credentials and recovery contracts live in
 [database.md](database.md). Raw snapshots stay in external files. Financial tabs
-read PostgreSQL; the Filings tab remains a JSON consumer. `configure_database.py`
-verifies/saves private local settings, and `refresh_data.py` checks/migrates,
+read PostgreSQL; the Filings tab remains a JSON consumer. `scripts/configure_database.py`
+verifies/saves private local settings, and `scripts/refresh_data.py` checks/migrates,
 ingests, validates and imports financial data. See [analytics](analytics.md) for
 failure boundaries, date alignment and refresh behaviour.
 
 ## Frozen portfolio entry point
 
-`src/app.py` owns the shared page; root `dashboard.py` supplies local SQL mode.
-`export_demo.py` reads a consistent current SQL snapshot and saved filing summaries,
+`src/ui/app.py` owns the shared page; root `dashboard.py` supplies local SQL mode.
+`scripts/export_demo.py` reads a consistent current SQL snapshot and saved filing summaries,
 allowlists public fields, validates them and atomically publishes `demo/snapshot.json`.
 `src/demo.py` verifies and decodes exact date/Decimal inputs for `demo/dashboard.py`.
 The demo never reads database settings or falls back to local pipeline files and

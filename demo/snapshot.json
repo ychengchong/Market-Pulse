@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "sha256": "4d74fdf3465f25cfc4e14c17930940c50f60a5dc956746fcb85153046ef19843",
+  "sha256": "560b0df7dfe3fe7b468d902839e2effef751c0d7b8666ad92e93482f41580b0d",
   "payload": {
-    "exported_at": "2026-11-10T11:04:35.923447+00:00",
+    "exported_at": "2026-11-10T11:42:18.737740+00:00",
     "summaries_updated_at": "2026-11-08T16:20:00.039061+00:00",
     "financials": {
       "companies": [
@@ -10,9 +10,9 @@
           "cik": "0001652044",
           "ticker": "GOOGL",
           "name": "Alphabet",
-          "dataset_id": "4ca7e1c3767397823b0a21a1fa9ee6b0e89e1651f85c63a1217d9f76b7393c1f",
+          "dataset_id": "d94b6cf2541cc34f978d56aa8ecd52eb4a6fa473afbb0a7718bb9d9a72c1a5d2",
           "snapshot_id": "f87bc183f74b45ecf9a0933e0e0a1b6b97ead51a9d29367a7dae436574e1c1d0",
-          "retrieved_at": "2026-11-10 18:32:49.517664+08:00",
+          "retrieved_at": "2026-11-10 19:42:10.412678+08:00",
           "start_date": "2021-01-01",
           "as_of": "2026-11-10"
         },
@@ -20,9 +20,9 @@
           "cik": "0001018724",
           "ticker": "AMZN",
           "name": "Amazon",
-          "dataset_id": "4ca7e1c3767397823b0a21a1fa9ee6b0e89e1651f85c63a1217d9f76b7393c1f",
+          "dataset_id": "d94b6cf2541cc34f978d56aa8ecd52eb4a6fa473afbb0a7718bb9d9a72c1a5d2",
           "snapshot_id": "acddb7c0a6973a1fd08372de3b292298a34eae7f42a7eedc4bdebd3ac659c8fd",
-          "retrieved_at": "2026-11-10 18:32:49.517664+08:00",
+          "retrieved_at": "2026-11-10 19:42:10.412678+08:00",
           "start_date": "2021-01-01",
           "as_of": "2026-11-10"
         },
@@ -30,9 +30,9 @@
           "cik": "0000320193",
           "ticker": "AAPL",
           "name": "Apple",
-          "dataset_id": "4ca7e1c3767397823b0a21a1fa9ee6b0e89e1651f85c63a1217d9f76b7393c1f",
+          "dataset_id": "d94b6cf2541cc34f978d56aa8ecd52eb4a6fa473afbb0a7718bb9d9a72c1a5d2",
           "snapshot_id": "f085735b4d08fb116ade18d24247ffabe11df8eb52eae6556b165831f15ef1ad",
-          "retrieved_at": "2026-11-10 18:32:49.517664+08:00",
+          "retrieved_at": "2026-11-10 19:42:10.412678+08:00",
           "start_date": "2021-01-01",
           "as_of": "2026-11-10"
         },
@@ -40,9 +40,9 @@
           "cik": "0000789019",
           "ticker": "MSFT",
           "name": "Microsoft",
-          "dataset_id": "4ca7e1c3767397823b0a21a1fa9ee6b0e89e1651f85c63a1217d9f76b7393c1f",
+          "dataset_id": "d94b6cf2541cc34f978d56aa8ecd52eb4a6fa473afbb0a7718bb9d9a72c1a5d2",
           "snapshot_id": "8c1903c041f5c27e86ed15f37debb1f41882b7904bba129ef9edc76478b1e8ea",
-          "retrieved_at": "2026-11-10 18:32:49.517664+08:00",
+          "retrieved_at": "2026-11-10 19:42:10.412678+08:00",
           "start_date": "2021-01-01",
           "as_of": "2026-11-10"
         },
@@ -50,9 +50,9 @@
           "cik": "0001045810",
           "ticker": "NVDA",
           "name": "Nvidia",
-          "dataset_id": "4ca7e1c3767397823b0a21a1fa9ee6b0e89e1651f85c63a1217d9f76b7393c1f",
+          "dataset_id": "d94b6cf2541cc34f978d56aa8ecd52eb4a6fa473afbb0a7718bb9d9a72c1a5d2",
           "snapshot_id": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
-          "retrieved_at": "2026-11-10 18:32:49.517664+08:00",
+          "retrieved_at": "2026-11-10 19:42:10.412678+08:00",
           "start_date": "2021-01-01",
           "as_of": "2026-11-10"
         }

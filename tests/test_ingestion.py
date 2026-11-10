@@ -11,9 +11,7 @@ from unittest.mock import patch
 
 import requests
 
-import main
-import process_filings
-import summarize_filings
+from scripts import ingest_filings as main, process_filings, summarize_filings
 from src import sec_http
 from src.filing_downloader import download_filing_html
 from src.sec_client import build_filing_url, get_recent_filings

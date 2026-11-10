@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
-import export_demo
+from scripts import export_demo
 from src.demo import create_snapshot, decode_snapshot, checksum
 from src.analytics import build_periods
 from test_database import DatasetWorkspace, ROOT
@@ -68,7 +68,7 @@ class DemoTests(DatasetWorkspace):
         snapshot=decode_snapshot(self.snapshot())
         Path(".streamlit").mkdir();Path(".streamlit/secrets.toml").write_text("malformed secrets deliberately")
         with patch("src.demo.load_snapshot",return_value=snapshot), \
-             patch("src.financial_ui.connection_string",side_effect=AssertionError("demo read credentials")), \
+             patch("src.ui.financial_ui.connection_string",side_effect=AssertionError("demo read credentials")), \
              patch("src.analytics.load_financials",side_effect=AssertionError("demo contacted database")):
             app=AppTest.from_file(str(ROOT/"demo/dashboard.py"),default_timeout=30).run()
             self.assertFalse(app.exception);self.assertFalse(app.error)

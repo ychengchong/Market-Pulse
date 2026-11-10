@@ -28,11 +28,11 @@ def main(argv=None):
     except ValueError as error:
         parser.error(str(error))
     report = start_stage("financials")
-    root = Path(__file__).resolve().parent
+    root = Path(__file__).resolve().parents[1]
     identity = dict(
         python=platform.python_version(), requests=requests.__version__,
         code_sha256={name: hashlib.sha256((root / name).read_text(encoding="utf-8").encode()).hexdigest()
-                     for name in ("ingest_financials.py", "src/xbrl.py", "src/sec_http.py", "src/storage.py")},
+                     for name in ("scripts/ingest_financials.py", "src/xbrl.py", "src/sec_http.py", "src/storage.py")},
         requirements_sha256=hashlib.sha256((root / "requirements.txt").read_text(encoding="utf-8").encode()).hexdigest()
     )
     report.update(start_date=since, as_of=args.as_of, mode="offline" if args.offline else "live", pipeline_identity=identity)

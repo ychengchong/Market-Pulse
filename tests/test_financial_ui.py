@@ -22,7 +22,7 @@ class FinancialUITests(DatasetWorkspace):
 
     def test_financial_charts_and_quarterly_filter(self):
         save_filings_to_json([],"data/summaries.json")
-        with patch("src.financial_ui.connection_string",return_value="synthetic"), \
+        with patch("src.ui.financial_ui.connection_string",return_value="synthetic"), \
              patch("src.analytics.load_financials",return_value=self.data()):
             app=AppTest.from_file(str(ROOT/"dashboard.py"),default_timeout=30).run()
             self.assertFalse(app.exception)
@@ -48,7 +48,7 @@ class FinancialUITests(DatasetWorkspace):
 
     def test_database_failure_keeps_filings_available_without_secret_output(self):
         save_filings_to_json([],"data/summaries.json")
-        with patch("src.financial_ui.connection_string",return_value="synthetic"), \
+        with patch("src.ui.financial_ui.connection_string",return_value="synthetic"), \
              patch("src.analytics.load_financials",side_effect=ValueError("private-password")):
             app=AppTest.from_file(str(ROOT/"dashboard.py"),default_timeout=30).run()
         self.assertFalse(app.exception)

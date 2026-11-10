@@ -7,17 +7,17 @@ JSON filing browser. No AI provider, stock-price feed or new dependency is added
 ## Startup and refresh
 
 From the repository root, with the locked environment active and PostgreSQL
-running, use `python configure_database.py` once. It prompts for a password,
+running, use `python -m scripts.configure_database` once. It prompts for a password,
 verifies connectivity and saves the connection in ignored
 `.streamlit/secrets.toml`. Defaults match the local `Market Pulse` database;
 `--database`, `--user`, `--host` and `--port` support other installations.
 Existing settings are not replaced without `--replace`. The file contains a
 credential: keep it private and outside Git/backups intended for sharing.
 Environment `DATABASE_URL` overrides the local file. These same settings are
-used by the app, `database.py` and `refresh_data.py`; `.env` is not auto-loaded.
+used by the app, `scripts/database.py` and `scripts/refresh_data.py`; `.env` is not auto-loaded.
 
 ```powershell
-python refresh_data.py
+python -m scripts.refresh_data
 python -m streamlit run dashboard.py
 ```
 
@@ -27,7 +27,7 @@ The history arguments `--start-date` and `--as-of` are forwarded unchanged.
 For a repeatable replay of existing snapshots without SEC access:
 
 ```powershell
-python refresh_data.py --offline --start-date 2021-01-01 --as-of 2026-11-09
+python -m scripts.refresh_data --offline --start-date 2021-01-01 --as-of 2026-11-09
 ```
 
 Only a complete validated ingestion can be imported. Import failures retain

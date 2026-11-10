@@ -9,7 +9,7 @@ The configured watchlist remains authoritative in `config.py`.
 Use the [locked environment](reproducibility.md), from the repository root:
 
 ```powershell
-python ingest_financials.py --start-date 2021-01-01 --as-of 2026-11-09
+python -m scripts.ingest_financials --start-date 2021-01-01 --as-of 2026-11-09
 ```
 
 This makes one companyfacts request per configured company, using the existing
@@ -22,7 +22,7 @@ saved. Download errors remain visible in the stage report.
 Replay the saved snapshots without network access:
 
 ```powershell
-python ingest_financials.py --offline --start-date 2021-01-01 --as-of 2026-11-09
+python -m scripts.ingest_financials --offline --start-date 2021-01-01 --as-of 2026-11-09
 ```
 
 The default `as-of` is today's Singapore date. The default start is January 1 five

@@ -176,7 +176,7 @@ def render_financials(overview_tab, comparison_tab, frozen_data=None):
         if frozen_data is None and not dsn:
             for tab in (overview_tab,comparison_tab):
                 with tab:
-                    st.info("Connect your PostgreSQL database to view financial charts. Set DATABASE_URL or add local database settings in .streamlit/secrets.toml, then run python refresh_data.py. The Filings tab remains available.")
+                    st.info("Connect your PostgreSQL database to view financial charts. Set DATABASE_URL or add local database settings in .streamlit/secrets.toml, then run python -m scripts.refresh_data. The Filings tab remains available.")
             return
         from src.analytics import load_financials
         data = load_financials(dsn) if frozen_data is None else frozen_data
@@ -185,7 +185,7 @@ def render_financials(overview_tab, comparison_tab, frozen_data=None):
     except Exception:
         for tab in (overview_tab,comparison_tab):
             with tab:
-                st.error("Financial data is unavailable. Check PostgreSQL and connection settings, then run python refresh_data.py. Saved filing summaries remain available in Filings.")
+                st.error("Financial data is unavailable. Check PostgreSQL and connection settings, then run python -m scripts.refresh_data. Saved filing summaries remain available in Filings.")
         return
     status=Path("data/refresh_status.json")
     if frozen_data is None and status.exists():

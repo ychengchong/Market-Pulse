@@ -6,13 +6,13 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import streamlit as st
-from src.app import render_app
+from src.ui.app import render_app
 from src.demo import load_snapshot
 
 try:
     snapshot = load_snapshot()
 except (OSError, ValueError, KeyError, TypeError):
-    st.error("The saved demo snapshot is missing or invalid. Regenerate it locally with python export_demo.py.")
+    st.error("The saved demo snapshot is missing or invalid. Regenerate it locally with python -m scripts.export_demo.")
     st.stop()
 
 render_app(demo=snapshot)
